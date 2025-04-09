@@ -7,6 +7,7 @@
     "parser": "typescript",
     "bracketSameLine": false,
     "arrowParens": "always",
-    "htmlWhitespaceSensitivity": "css"
+    "htmlWhitespaceSensitivity": "css",
+    "prettier-plugin-organize-imports": true,
   }
   
