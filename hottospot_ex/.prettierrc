@@ -8,6 +8,6 @@
     "bracketSameLine": false,
     "arrowParens": "always",
     "htmlWhitespaceSensitivity": "css",
-    "prettier-plugin-organize-imports": true,
+    "prettier-plugin-organize-imports": true
   }
   
