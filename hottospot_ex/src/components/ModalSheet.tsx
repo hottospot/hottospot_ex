@@ -1,8 +1,10 @@
-import React from 'react'
 import { motion } from "framer-motion";
-import style from "./ModalSheet.module.scss";
 import { useAtom } from 'jotai';
+import React from 'react'
+
 import { modalWindowAtom } from '../atoms/modalWindowAtom';
+
+import style from "./ModalSheet.module.scss";
 
 function ModalSheet() {
       const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)

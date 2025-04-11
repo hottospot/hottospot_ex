@@ -1,4 +1,5 @@
 import Img from '../../../public/img/error.svg';
+
 import styles from './errorPage.module.scss';
 
 const ErrorPage = ({ error, message }) => {

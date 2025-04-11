@@ -1,5 +1,5 @@
-import React from 'react'
 import { easeOut, motion } from "framer-motion";
+
 import styles from "./GradationIconButton.module.scss";
 
 interface GradationIconButtonProps{

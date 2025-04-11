@@ -1,9 +1,14 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import styles from './ModalWindow.module.scss'
-import { SetStateAction } from 'jotai'
-import GradationIconButton from '../layout/GradationIconButton'
 import { Icon } from "@iconify/react";
+import { motion } from 'framer-motion'
+import { SetStateAction } from 'jotai'
+import React from 'react'
+
+import GradationIconButton from '../layout/GradationIconButton'
+
+import styles from './ModalWindow.module.scss'
+
+
+
 
 interface ModalWindowProps {
   children:string,

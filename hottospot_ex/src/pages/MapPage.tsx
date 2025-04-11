@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { LatLng } from 'leaflet'
 import * as turf from '@turf/turf'
-import style from './MapPage.module.scss'
-import PinLocate from '../components/PinLocate'
 import { useAtom } from 'jotai'
+import { LatLng } from 'leaflet'
+
 import { locationDataAtom } from '../atoms/locationDataAtom'
 import { modalWindowAtom } from '../atoms/modalWindowAtom'
 import ModalSheet from '../components/ModalSheet'
+import PinLocate from '../components/PinLocate'
+
+import style from './MapPage.module.scss'
 
 function SetViewOnClick() {
   const map = useMapEvent('click', (e) => {
@@ -90,7 +92,7 @@ function MapPage() {
   return (
     <>
       {modalWindowIsOpen && (
-        <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)}></div>
+        <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)} />
       )}
       <div style={{ zIndex: "10", position: "absolute" }}>
         <MapContainer

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+
 import Background from '../layout/home/Background'
 import Title from '../layout/home/Title'
 

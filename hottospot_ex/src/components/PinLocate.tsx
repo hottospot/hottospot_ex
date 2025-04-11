@@ -1,11 +1,12 @@
 import { SetStateAction, useAtom} from 'jotai'
+import L from 'leaflet'
 import React from 'react'
 import { Marker, useMap } from 'react-leaflet'
+
 import blueicon from '../../public/img/blueIcon.png'
+import fireicon from '../../public/img/fireIcon.png'
 import greenicon from '../../public/img/greenIcon.png'
 import redicon from '../../public/img/redIcon.png'
-import fireicon from '../../public/img/fireIcon.png'
-import L from 'leaflet'
 import { locationPositionAtom } from '../atoms/locationPositionAtom'
 
 interface PinLocateProps {
