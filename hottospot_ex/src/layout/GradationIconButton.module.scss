@@ -1,0 +1,40 @@
+.button {
+    position: relative;
+    display: inline-block;
+    padding: 8px;
+    display: flex;
+    border-radius: 100px;
+    width: fit-content;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: 100ms;
+    outline: none;
+  }
+  
+  .img {
+    display: block;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .gray {
+    background-color: #e0e8f0;
+  }
+  
+  .red {
+    background: linear-gradient(97.4deg, #f84f90 0%, #ed4b4b 100%);
+  }
+  
+  .white {
+    background-color: #ffffff;
+  }
+  
+  .none {
+    background: none;
+  }
+  
