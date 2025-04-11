@@ -110,7 +110,7 @@ function MapPage() {
           <SetViewOnClick/>
           <Marker position={center} />
 
-          {arrDistance.map((pin, index) => (
+          {arrDistance.map((index) => (
             <PinLocate  setModalWindowIsOpen={setModalWindowIsOpen}  arrDistance={arrDistance} key={index} />
           ))}
         </MapContainer>

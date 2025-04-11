@@ -1,5 +1,3 @@
-import React from 'react';
-
 import icon from '../../../public/img/icon.svg';
 
 import style from './Title.module.scss';
