@@ -1,4 +1,4 @@
-import { SetStateAction, useAtom, WritableAtom } from 'jotai'
+import { SetStateAction, useAtom} from 'jotai'
 import React from 'react'
 import { Marker, useMap } from 'react-leaflet'
 import blueicon from '../../public/img/blueIcon.png'
@@ -6,31 +6,28 @@ import greenicon from '../../public/img/greenIcon.png'
 import redicon from '../../public/img/redIcon.png'
 import fireicon from '../../public/img/fireIcon.png'
 import L from 'leaflet'
+import { locationPositionAtom } from '../atoms/locationPositionAtom'
 
 interface PinLocateProps {
-  setIsOpen: React.Dispatch<SetStateAction<boolean>>
-  setPosition: React.Dispatch<
-    SetStateAction<{
-      latitude: number | null
-      longitude: number | null
-      name: string | null
-    }>
-  >
+  setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>
   arrDistance: {
     name: string
     position: number[]
+    likeCount:number
   }[]
 }
 
-function PinLocate({ setIsOpen, setPosition, arrDistance }: PinLocateProps) {
+function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   console.log('locationData', arrDistance)
+
+  const [position, setPosition] = useAtom(locationPositionAtom) //
   const map = useMap()
   //   const locationArr = Object.values(locationData)
 
-  const handleOpen = (location) => {
+  const handleOpen = (location:{position:number[],name:string}) => {
     console.log('location[0]', location.position[0])
     console.log('location[0]', location.name)
-    setIsOpen(true)
+    setModalWindowIsOpen(true)
     setPosition({
       latitude: location.position[0],
       longitude: location.position[1],
@@ -43,7 +40,9 @@ function PinLocate({ setIsOpen, setPosition, arrDistance }: PinLocateProps) {
     })
   }
 
-  function Icon(location) {
+  console.log("position",position)
+
+  function Icon(location:{likeCount:number}) {
     const showIcon =
       location.likeCount < 50
         ? blueicon

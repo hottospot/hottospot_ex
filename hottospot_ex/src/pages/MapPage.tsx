@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { LatLng } from 'leaflet'
 import * as turf from '@turf/turf'
 import style from './MapPage.module.scss'
-import L from 'leaflet'
 import PinLocate from '../components/PinLocate'
-import { isHotModalAtom } from '../atoms/isHotModalAtom'
 import { useAtom } from 'jotai'
-import { locationPositionAtom } from '../atoms/locationPositionAtom'
 import { locationDataAtom } from '../atoms/locationDataAtom'
+import { modalWindowAtom } from '../atoms/modalWindowAtom'
+import ModalSheet from '../components/ModalSheet'
+
+function SetViewOnClick() {
+  const map = useMapEvent('click', (e) => {
+    map.setView(e.latlng, map.getZoom(), {
+      animate: true,
+    })
+  })
+
+  return null
+}
 
 function MapPage() {
   const [correntposition, setCorrentPosition] = useState({
@@ -18,21 +27,23 @@ function MapPage() {
   })
   const center = new LatLng(35.65862055760233, 139.74543043734087) //座標オブジェクトLatLng
   // const position = new LatLng(35.65862055760233, 139.74543043734087) //座標オブジェクトLatLng
-  const [isHotModal, setIsHotModalAtom] = useAtom(isHotModalAtom);
-  const [position, setPosition] = useAtom(locationPositionAtom);
-  const [locationData, setLocationData] = useAtom(locationDataAtom);
+
+  const [locationData, setLocationData] = useAtom(locationDataAtom)
+  const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
+
   //仮の緯度軽度
   const arrDistance = [
     {
       name: 'tokyoTower',
       position: [35.65862055760233, 139.74543043734087],
+      likeCount:29
     },
     {
       name: 'skytree',
       position: [35.71013065861893, 139.81068527858596],
+      likeCount:79
     },
   ]
-  
 
   //緯度 35° lat
 
@@ -42,15 +53,15 @@ function MapPage() {
       const { latitude, longitude } = position.coords
       setCorrentPosition({ latitude, longitude })
     })
-    console.log("arrDistance",arrDistance)
+    console.log('arrDistance', arrDistance)
 
     arrDistance.map((position) => {
-      console.log("position",position.position)
+      console.log('position', position.position)
     })
     setLocationData(arrDistance.map((position) => position.position))
   }, [])
 
-  console.log("locationData",locationData)
+  console.log('locationData', locationData)
 
   //距離の計算
   const R = Math.PI / 180
@@ -61,7 +72,6 @@ function MapPage() {
     lng2 *= R
     return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2))
   }
-  
 
   arrDistance.map((d) => {
     //console.log("d.position",d.position)
@@ -79,11 +89,14 @@ function MapPage() {
 
   return (
     <>
-      <div className={style.MapPage}>
+      {modalWindowIsOpen && (
+        <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)}></div>
+      )}
+      <div style={{ zIndex: "10", position: "absolute" }}>
         <MapContainer
           center={center}
           zoom={13}
-          scrollWheelZoom={false} 
+          scrollWheelZoom={false}
           // zoomControl={false} //ズームバー（開発時のみ)
           style={{ height: '100vh', width: '100vw' }}
         >
@@ -91,19 +104,19 @@ function MapPage() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}"
           />
-          {
-            arrDistance.map((pin,index) => (
-              // <Marker position={[pin.position[0], pin.position[1]]} key={index}></Marker>
-              <PinLocate 
-              setIsOpen={setIsHotModalAtom}
-              setPosition={setPosition}
-              arrDistance={arrDistance}
-              key={index}
-              />
-            ))
-          }
+
+          <SetViewOnClick/>
+          <Marker position={center} />
+
+          {arrDistance.map((pin, index) => (
+            <PinLocate  setModalWindowIsOpen={setModalWindowIsOpen}  arrDistance={arrDistance} key={index} />
+          ))}
         </MapContainer>
       </div>
+      <div className={style.form}>
+        <ModalSheet />
+      </div>
+      
     </>
   )
 }

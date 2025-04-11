@@ -1,13 +1,12 @@
-import { atom } from 'jotai';
-import { LocationData } from '../components/PinLocate';
+import { atom } from 'jotai'
 
-export const locationPositionAtom = atom<LocationData>({
+interface locationPositionAtomProps {
+  latitude: number|null;
+  longitude: number|null;
+  name: string|null;
+}
+export const locationPositionAtom = atom<locationPositionAtomProps>({
   latitude: null,
   longitude: null,
   name: null,
-  explanation: null,
-  address: null,
-  likeCount: null,
-  locationId: null,
-  photo: null,
-});
+})
