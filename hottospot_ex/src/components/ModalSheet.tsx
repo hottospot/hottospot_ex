@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useAtom } from 'jotai';
-import React from 'react'
 
 import { modalWindowAtom } from '../atoms/modalWindowAtom';
 
