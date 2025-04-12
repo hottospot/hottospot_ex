@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MapContainer, Marker, TileLayer, useMapEvent } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import * as turf from '@turf/turf'
 import { useAtom } from 'jotai'
@@ -7,10 +7,10 @@ import { LatLng } from 'leaflet'
 
 import { locationDataAtom } from '../atoms/locationDataAtom'
 import { modalWindowAtom } from '../atoms/modalWindowAtom'
-import ModalSheet from '../components/ModalSheet'
-import PinLocate from '../components/PinLocate'
+import ModalSheet from '../components/modalsheet/ModalSheet'
 
 import style from './MapPage.module.scss'
+import PinLocate from '../components/PinLocate'
 
 function SetViewOnClick() {
   const map = useMapEvent('click', (e) => {
@@ -30,7 +30,7 @@ function MapPage() {
   const center = new LatLng(35.65862055760233, 139.74543043734087) //座標オブジェクトLatLng
   // const position = new LatLng(35.65862055760233, 139.74543043734087) //座標オブジェクトLatLng
 
-  const [locationData, setLocationData] = useAtom(locationDataAtom)
+  const [_, setLocationData] = useAtom(locationDataAtom)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
 
   //仮の緯度軽度
@@ -38,12 +38,12 @@ function MapPage() {
     {
       name: 'tokyoTower',
       position: [35.65862055760233, 139.74543043734087],
-      likeCount:29
+      likeCount: 29,
     },
     {
       name: 'skytree',
       position: [35.71013065861893, 139.81068527858596],
-      likeCount:79
+      likeCount: 79,
     },
   ]
 
@@ -63,7 +63,37 @@ function MapPage() {
     setLocationData(arrDistance.map((position) => position.position))
   }, [])
 
-  console.log('locationData', locationData)
+  const MapBoundsLoggerFirst = () => {
+    const mapFirst = useMap()  //leafletのイベントハンドラを使うことができる
+    useEffect(() => {
+      const bounds = mapFirst.getBounds()
+      const southWest = bounds.getSouthWest() // 左下
+      const northEast = bounds.getNorthEast() // 右上
+      console.log('SouthWest.lat:', southWest.lat)
+      console.log('SouthWest.lng:', southWest.lng) // 緯度・経度
+      console.log('NorthEast.lat:', northEast.lat)
+      console.log('NorthEast.lng:', northEast.lng)
+    }, [])
+
+    return null
+  }
+
+  const MapBoundsLogger = () => {
+    const map = useMapEvents({
+      //leafletのイベントハンドラを使うことができる
+      moveend: () => {
+        const bounds = map.getBounds()
+        const southWest = bounds.getSouthWest() // 左下
+        const northEast = bounds.getNorthEast() // 右上
+        console.log('SouthWest.lat:', southWest.lat)
+        console.log('SouthWest.lng:', southWest.lng) 
+        console.log('NorthEast.lat:', northEast.lat)
+        console.log('NorthEast.lng:', northEast.lng)
+      },
+    })
+
+    return null
+  }
 
   //距離の計算
   const R = Math.PI / 180
@@ -91,10 +121,8 @@ function MapPage() {
 
   return (
     <>
-      {modalWindowIsOpen && (
-        <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)} />
-      )}
-      <div style={{ zIndex: "10", position: "absolute" }}>
+      {modalWindowIsOpen && <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)} />}
+      <div style={{ zIndex: '10', position: 'absolute' }}>
         <MapContainer
           center={center}
           zoom={13}
@@ -106,19 +134,20 @@ function MapPage() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}"
           />
+          <MapBoundsLoggerFirst />
+          <MapBoundsLogger />
 
-          <SetViewOnClick/>
+          <SetViewOnClick />
           <Marker position={center} />
 
-          {arrDistance.map((index) => (
-            <PinLocate  setModalWindowIsOpen={setModalWindowIsOpen}  arrDistance={arrDistance} key={index} />
+          {arrDistance.map((distance) => (
+            <PinLocate setModalWindowIsOpen={setModalWindowIsOpen} arrDistance={arrDistance} key={distance.name} />
           ))}
         </MapContainer>
       </div>
       <div className={style.form}>
         <ModalSheet />
       </div>
-      
     </>
   )
 }

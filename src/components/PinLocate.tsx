@@ -21,7 +21,7 @@ interface PinLocateProps {
 function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   console.log('locationData', arrDistance)
 
-  const [position, setPosition] = useAtom(locationPositionAtom) //
+  const [position, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
   const map = useMap()
   //   const locationArr = Object.values(locationData)
 
