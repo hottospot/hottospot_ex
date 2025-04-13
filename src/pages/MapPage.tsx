@@ -23,12 +23,14 @@ function SetViewOnClick() {
 }
 
 function MapPage() {
-  const [correntposition, setCorrentPosition] = useState({
-    latitude: 35.65862055760233,
-    longitude: 139.74543043734087,
-  })
-  const center = new LatLng(35.65862055760233, 139.74543043734087) //座標オブジェクトLatLng
-  // const position = new LatLng(35.65862055760233, 139.74543043734087) //座標オブジェクトLatLng
+  // const [correntposition, setCorrentPosition] = useState({
+  //   latitude: 35.65862055760233,
+  //   longitude: 139.74543043734087,
+  // })
+  const [correntposition, setCorrentPosition] = useState({ latitude: 35.6586205576023, longitude: 139.74543043734087 });
+
+
+  const center = new LatLng(correntposition.latitude, correntposition.longitude) //座標オブジェクトLatLng
 
   const [_, setLocationData] = useAtom(locationDataAtom)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
@@ -36,23 +38,25 @@ function MapPage() {
   //仮の緯度軽度
   const arrDistance = [
     {
-      name: 'tokyoTower',
-      position: [35.65862055760233, 139.74543043734087],
+      name: 'ジブリパーク',
+      position: [35.1744374, 137.0901494],
       likeCount: 29,
     },
     {
-      name: 'skytree',
-      position: [35.71013065861893, 139.81068527858596],
+      name: 'ikea',
+      position: [35.1762717, 137.0754212],
       likeCount: 79,
     },
   ]
 
   //緯度 35° lat
+  
 
   //現在地の取得
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords
+      console.log("{ latitude, longitude }",{ latitude, longitude });
       setCorrentPosition({ latitude, longitude })
     })
     console.log('arrDistance', arrDistance)
@@ -129,6 +133,7 @@ function MapPage() {
           scrollWheelZoom={false}
           // zoomControl={false} //ズームバー（開発時のみ)
           style={{ height: '100vh', width: '100vw' }}
+          key={`${correntposition.latitude}-${correntposition.longitude}`} // ←座標が変わると再描画
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
