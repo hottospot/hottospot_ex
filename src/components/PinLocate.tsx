@@ -1,7 +1,7 @@
 import { SetStateAction, useAtom} from 'jotai'
 import L from 'leaflet'
-import React from 'react'
-import { Marker, useMap } from 'react-leaflet'
+import React, { useState } from 'react'
+import { Marker, useMap, useMapEvents } from 'react-leaflet'
 
 import blueicon from '../../public/img/blueIcon.png'
 import fireicon from '../../public/img/fireIcon.png'
@@ -20,11 +20,20 @@ interface PinLocateProps {
 
 function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   console.log('locationData', arrDistance)
+  const map = useMap()
+  const [zoomLevel, setZoomLevel] = useState(map.getZoom());
+
 
   const [position, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
-  const map = useMap()
   //   const locationArr = Object.values(locationData)
 
+  useMapEvents({
+      zoomend: () => {
+        setZoomLevel(map.getZoom());
+      },
+    });
+
+  console.log("zoomLevel",zoomLevel)
   const handleOpen = (location:{position:number[],name:string}) => {
     console.log('location[0]', location.position[0])
     console.log('location[0]', location.name)
@@ -46,31 +55,43 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   function Icon(location:{likeCount:number}) {
     const showIcon =
       location.likeCount < 50
-        ? blueicon
+        ? {icon:blueicon,zoomlevel:11}
         : location.likeCount >= 50 && location.likeCount < 100
-        ? greenicon
+        ? {icon:greenicon,zoomlevel:9}
         : location.likeCount >= 100 && location.likeCount < 200
-        ? redicon
-        : fireicon
+        ? {icon:redicon,zoomlevel:7}
+        : {icon:fireicon,zoomlevel:0}
 
-    return L.divIcon({
-      className: 'custom-marker',
-      html: `
-            <div style="position: relative; text-align: center;">
-              <img src=${showIcon} style="width: 50px; height: 50px;" />
-              <div style="
-              transform: translateY(-210%);
-              color:white;
-                display: flex; top:16px; justify-content: center;
-                font-weight: bold; font-size: 12px;">
-                ${location.likeCount}
+
+    if(zoomLevel >= showIcon.zoomlevel){
+      return L.divIcon({
+        className: 'custom-marker',
+        html: `
+              <div style="position: relative; text-align: center;">
+                <img src=${showIcon.icon} style="width: 50px; height: 50px;" />
+                <div style="
+                transform: translateY(-210%);
+                color:white;
+                  display: flex; top:16px; justify-content: center;
+                  font-weight: bold; font-size: 12px;">
+                  ${location.likeCount}
+                </div>
               </div>
-            </div>
-            `,
-      iconSize: [50, 50],
-      iconAnchor: [25, 25],
+              `,
+        iconSize: [50, 50],
+        iconAnchor: [25, 25],
+      })
+    }
+    else{
+      return L.divIcon({
+        className: 'custom-marker',
+        html: ``,
+        iconSize: [50, 50],
+        iconAnchor: [25, 25],
     })
+    
   }
+}
 
   return (
     <div>
