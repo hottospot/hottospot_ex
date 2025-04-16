@@ -1,14 +1,14 @@
-import icon from '../../../public/img/icon.svg';
+import icon from '../../../public/img/icon.svg'
 
-import style from './Title.module.scss';
+import style from './Title.module.scss'
 
 function Title() {
   return (
     <div className={style.title}>
-      <img src={icon} className={style.image} />
+      <img src={icon} className={style.image} alt="Icon" />
       <div className={style.hottospot}>Hottospot</div>
     </div>
-  );
+  )
 }
 
-export default Title;
+export default Title
