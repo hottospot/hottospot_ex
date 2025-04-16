@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column; 
     width: 100%;
+    height: 100%;
     
 
     .whole{
@@ -30,6 +31,7 @@
           justify-content: space-around;
         }
 
+
       }
 
       .subtitle{
@@ -42,4 +44,91 @@
 
     }
 
+    .middle{
+      display: flex;
+      width: 100%;
+      height: 50%;
+
+      .middleLeft{
+        width: 50%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+  
+        .img{
+          width: 90%;
+          height: 100%;
+          text-align: center;
+          background-color: #758693;
+          border-radius: 10%;
+
+        }
+      }
+
+      .middleRight{
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        width: 50%;
+        height: 100%;
+
+        .targetTitle{
+          color: #758693;
+          font-size: 90%;
+          font-weight: 600;
+        }
+
+        .limit{
+          width: 90%;
+          color: #24232D;
+          font-size: 200%;
+          border-bottom: 1px solid #D2D9E0;
+          font-weight: 700;
+          padding-bottom: 3%
+        }
+
+        .predict{
+          color: #758693;
+          font-size: 90%;
+          font-weight: 600;
+          margin-top: 3%
+
+        }
+
+        .waysButton{
+          width: 90%;
+          margin-top: 2%;
+          display: flex;
+          justify-content: flex-end;
+          
+          .walk{
+            padding-right: 3%
+          }
+
+          .car{
+            padding-right: 3%
+          }
+
+        }
+
+        .hour{
+          color: #24232D;
+          font-size: 200%;
+          font-weight: 700;
+        }
+
+        .minutes{
+          color: #24232D;
+          border-bottom: 1px solid #D2D9E0;
+          font-size: 200%;
+          font-weight: 700;
+          padding-bottom: 3%
+        }
+        
+        .url{
+          color: #758693;
+          font-size: 90%;
+        }
+      }
+    }
   }
