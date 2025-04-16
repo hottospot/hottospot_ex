@@ -1,14 +1,11 @@
 .container {
   background-color: #000000;
-  position: absolute;
   z-index: 100;
   display: flex;
   align-items: center;
+  width: fit-content;
   padding: 8px 16px;
   border-radius: 100px;
-  width: fit-content;
-  height: fit-content;
-  inset: 30px;
 
   .text {
     font-size: 12px;
