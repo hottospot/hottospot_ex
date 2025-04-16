@@ -13,6 +13,7 @@ import { TagButton } from "../layout/TagButton";
 
 import style from "./MapPage.module.scss";
 import { SkipButton } from "../layout/SkipButton";
+import { Search } from "../components/Search";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -128,6 +129,7 @@ function MapPage() {
 
   return (
     <>
+      <Search />
       {modalWindowIsOpen && (
         <div
           className={style.modalOverlay}
