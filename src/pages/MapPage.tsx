@@ -12,6 +12,7 @@ import ModalSheet from "../components/modalsheet/ModalSheet";
 import { TagButton } from "../layout/TagButton";
 
 import style from "./MapPage.module.scss";
+import { SkipButton } from "../layout/SkipButton";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
