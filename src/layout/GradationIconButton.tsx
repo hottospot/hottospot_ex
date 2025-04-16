@@ -1,14 +1,15 @@
-import { easeOut, motion } from "framer-motion";
+import { easeOut, motion } from 'framer-motion'
+import { ReactNode } from 'react'
 
-import styles from "./GradationIconButton.module.scss";
+import styles from './GradationIconButton.module.scss'
 
-interface GradationIconButtonProps{
-    children:string;
-    color:string;
-    onClick: () => void;
+interface GradationIconButtonProps {
+  children: ReactNode
+  color: string
+  onClick: () => void
 }
 
-function GradationIconButton({ children, color, onClick }:GradationIconButtonProps) {
+function GradationIconButton({ children, color, onClick }: GradationIconButtonProps) {
   return (
     <div>
       <motion.button
