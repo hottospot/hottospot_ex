@@ -1,0 +1,45 @@
+.container{
+    display: flex;
+    flex-direction: column; 
+    width: 100%;
+    
+
+    .whole{
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 5%;
+      
+
+      .header{
+        display: flex;
+        justify-content: space-between;
+        width: 90%;
+        height: 55%;
+
+        .title{
+          color: #24232D;
+          font-size: 180%;
+          font-weight: bold;
+        }
+
+        .buttons{
+          display: flex;
+          width: 27%;
+          justify-content: space-around;
+        }
+
+      }
+
+      .subtitle{
+        width: 89%;
+        display: flex;
+        color: #758693;
+        font-size:90%;
+
+      }
+
+    }
+
+  }
