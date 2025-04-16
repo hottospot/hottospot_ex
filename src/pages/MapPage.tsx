@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import * as turf from "@turf/turf";
 import { useAtom } from "jotai";
 import { LatLng } from "leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 
 import { locationDataAtom } from "../atoms/locationDataAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
+import PinLocate from "../components/PinLocate";
 import ModalSheet from "../components/modalsheet/ModalSheet";
+import { TagButton } from "../layout/TagButton";
 
 import style from "./MapPage.module.scss";
-import PinLocate from "../components/PinLocate";
-import { Search } from "../layout/Search";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -161,7 +161,6 @@ function MapPage() {
           ))}
         </MapContainer>
       </div>
-      <Search />
       <div className={style.form}>
         <ModalSheet />
       </div>

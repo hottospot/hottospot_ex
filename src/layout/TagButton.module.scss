@@ -1,0 +1,58 @@
+.container {
+  background-color: #000000;
+  position: absolute;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 100px;
+  width: fit-content;
+  height: fit-content;
+  inset: 30px;
+
+  .text {
+    font-size: 12px;
+  }
+}
+
+.blue {
+  background-color: #e6f7ff;
+  .text {
+    color: #00aaf2;
+  }
+}
+
+.green {
+  background-color: #eaf9f0;
+  .text {
+    color: #00c460;
+  }
+}
+
+.red {
+  background-color: #ffeeee;
+  .text {
+    color: #f85746;
+  }
+}
+
+.orange {
+  background-color: #fff5ec;
+  .text {
+    color: #ff9833;
+  }
+}
+
+.purple {
+  background-color: #f1eaff;
+  .text {
+    color: #6f30ff;
+  }
+}
+
+.disable {
+  background-color: #f4f6f8;
+  .text {
+    color: #d5e0e8;
+  }
+}
