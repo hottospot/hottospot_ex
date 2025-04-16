@@ -11,6 +11,7 @@ import ModalSheet from "../components/modalsheet/ModalSheet";
 
 import style from "./MapPage.module.scss";
 import PinLocate from "../components/PinLocate";
+import { Search } from "../layout/Search";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -160,6 +161,7 @@ function MapPage() {
           ))}
         </MapContainer>
       </div>
+      <Search />
       <div className={style.form}>
         <ModalSheet />
       </div>
