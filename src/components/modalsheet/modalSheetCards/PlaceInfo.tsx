@@ -2,7 +2,6 @@ import { Icon } from '@iconify/react'
 import { useAtom } from 'jotai'
 
 import { locationPositionAtom } from '../../../atoms/locationPositionAtom'
-import { GetMethod } from '../../ResponseMethod'
 import GradationIconButton from '../../../layout/GradationIconButton'
 
 import styles from './PlaceInfo.module.scss'

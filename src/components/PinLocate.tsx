@@ -32,7 +32,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
   const map = useMap()
   const [zoomLevel, setZoomLevel] = useState(map.getZoom())
 
-  const [position, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
+  const [__, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
 
   useMapEvents({
     zoomend: () => {
@@ -68,19 +68,19 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
     // console.log("road",road);
 
     const walk = road / 0.08
-    // console.log("walk",walk)
+    console.log("walk",walk)
 
     const car = road / 34
-    // console.log("car",car)
+    console.log("car",car)
 
     const train = road / 100
-    // console.log("train",train)
+    console.log("train",train)
     
     if(car < 1){
-      // console.log("carMini",car * 60)
+      console.log("carMini",car * 60)
     }
     if(train < 1){
-      // console.log("trainMini",train * 60)
+      console.log("trainMini",train * 60)
     }
 
   }

@@ -12,7 +12,7 @@ import ModalSheet from '../components/modalsheet/ModalSheet'
 import style from './MapPage.module.scss'
 import PinLocate from '../components/PinLocate'
 import { GetMethod } from '../components/ResponseMethod'
-import { data, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 function SetViewOnClick() {
   const map = useMapEvent('click', (e) => {
@@ -36,9 +36,7 @@ function MapPage() {
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude) //座標オブジェクトLatLng
 
-  const [_, setLocationData] = useAtom(locationDataAtom)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
-  const [bounds, setBounds] = useState({ latMin: 0, latMax: 0, lngMin: 0, lngMax: 0 })
   const [arrDistance, setArrDistance] = useState([
     {
       explanation: '',
@@ -66,29 +64,9 @@ function MapPage() {
   //   },
   // ]
 
-  //緯度 35° lat
-
-  //現在地の取得
-  // useEffect(() => {
-  //   navigator.geolocation.getCurrentPosition((position) => {
-  //     const { latitude, longitude } = position.coords
-  //     console.log('{ latitude, longitude }', { latitude, longitude })
-  //     setCorrentPosition({ latitude, longitude })
-  //   })
-  //   console.log('arrDistance', arrDistance)
-
-  //   // arrDistance.map((position) => {
-  //   //   console.log('position', position.position)
-  //   // })
-
-  // }, [])
-
   const MapBoundsLoggerFirst = () => {
     const mapFirst = useMap() //leafletのイベントハンドラを使うことができる
-    const hasRun = useRef(false)
     useEffect(() => {
-      // if(hasRun.current)  return;
-      // hasRun.current = true;
       const bounds = mapFirst.getBounds()
       const southWest = bounds.getSouthWest() // 左下
       const northEast = bounds.getNorthEast() // 右上
@@ -101,8 +79,35 @@ function MapPage() {
         const data = await GetMethod(
           `https://hottospot-backend-ex.umaminokiami.workers.dev/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
         )
-        
+
+        setArrDistance((prev) => [
+          ...prev,
+          ...data.map(
+            (d: {
+              explanation: string
+              latitude: number
+              likes: number
+              longitude: number
+              tags: string
+              tiktokTitle: string
+              url: string
+              userName: string
+            }) => ({
+              explanation: d.explanation,
+              latitude: d.latitude,
+              likes: d.likes,
+              longitude: d.longitude,
+              tags: d.tags,
+              tiktokTitle: d.tiktokTitle,
+              url: d.url,
+              userName: d.userName,
+            }),
+          ),
+        ])
       }
+
+      
+
       fetchData()
     }, [])
 
@@ -113,9 +118,8 @@ function MapPage() {
 
   const MapBoundsLogger = () => {
     const mapzoom = useMap()
-    const [sendScale, setSendScale] = useState<number>()
 
-    const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom())
+    const [__, setZoomLevel] = useState(mapzoom.getZoom())
 
     useMapEvents({
       zoomend: () => {
@@ -141,10 +145,6 @@ function MapPage() {
         const bounds = map.getBounds()
         const southWest = bounds.getSouthWest() // 左下
         const northEast = bounds.getNorthEast() // 右上
-        // console.log('SouthWest.lat:', southWest.lat)
-        // console.log('SouthWest.lng:', southWest.lng)
-        // console.log('NorthEast.lat:', northEast.lat)
-        // console.log('NorthEast.lng:', northEast.lng)
 
         //console.log('zoom', zoomLevel)
 
@@ -154,24 +154,33 @@ function MapPage() {
         setArrDistance([])
         setArrDistance((prev) => [
           ...prev,
-          ...data.map((d:{explanation:string,latitude:number,likes:number,longitude:number,tags:string,tiktokTitle:string,url:string,userName:string}) => ({ 
-            explanation: d.explanation, 
-            latitude: d.latitude, 
-            likes: d.likes, 
-            longitude:d.longitude,
-            tags:d.tags,
-            tiktokTitle:d.tiktokTitle,
-            url:d.url,
-            userName:d.userName
-          })),
+          ...data.map(
+            (d: {
+              explanation: string
+              latitude: number
+              likes: number
+              longitude: number
+              tags: string
+              tiktokTitle: string
+              url: string
+              userName: string
+            }) => ({
+              explanation: d.explanation,
+              latitude: d.latitude,
+              likes: d.likes,
+              longitude: d.longitude,
+              tags: d.tags,
+              tiktokTitle: d.tiktokTitle,
+              url: d.url,
+              userName: d.userName,
+            }),
+          ),
         ])
-
       },
     })
 
     return null
   }
-
 
   // console.log('bounds', bounds)
   // console.log('arrDistance', arrDistance)
@@ -221,7 +230,7 @@ function MapPage() {
           <SetViewOnClick />
           <Marker position={center} />
 
-          {arrDistance.map((distance,index) => (
+          {arrDistance.map((distance, index) => (
             <PinLocate
               setModalWindowIsOpen={setModalWindowIsOpen}
               arrDistance={arrDistance}
