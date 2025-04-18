@@ -8,7 +8,6 @@ import fireicon from '../../public/img/fireIcon.png'
 import greenicon from '../../public/img/greenIcon.png'
 import redicon from '../../public/img/redIcon.png'
 import { locationPositionAtom } from '../atoms/locationPositionAtom'
-
 interface PinLocateProps {
   setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>
   arrDistance: {
@@ -28,11 +27,10 @@ interface PinLocateProps {
 }
 
 function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLocateProps) {
-
   const map = useMap()
   const [zoomLevel, setZoomLevel] = useState(map.getZoom())
 
-  const [__, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
+  const [position, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
 
   useMapEvents({
     zoomend: () => {
@@ -40,8 +38,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
     },
   })
 
-  //console.log('zoomLevel', zoomLevel)
-  const handleOpen = (place: { latitude: number, longitude: number , tiktokTitle:string}) => {
+  const handleOpen = (place: { latitude: number; longitude: number; tiktokTitle: string }) => {
     setModalWindowIsOpen(true)
     setPosition({
       latitude: place.latitude,
@@ -68,23 +65,23 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
     // console.log("road",road);
 
     const walk = road / 0.08
-    console.log("walk",walk)
+    console.log('walk', walk)
 
     const car = road / 34
-    console.log("car",car)
+    console.log('car', car)
 
     const train = road / 100
-    console.log("train",train)
-    
-    if(car < 1){
-      console.log("carMini",car * 60)
-    }
-    if(train < 1){
-      console.log("trainMini",train * 60)
-    }
+    console.log('train', train)
 
+    if (car < 1) {
+      console.log('carMini', car * 60)
+    }
+    if (train < 1) {
+      console.log('trainMini', train * 60)
+    }
   }
 
+  
   function Icon(location: { likes: number }) {
     const showIcon =
       location.likes < 50

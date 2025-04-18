@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import * as turf from '@turf/turf'
 import { useAtom } from 'jotai'
-import { LatLng } from 'leaflet'
+import { LatLng, map } from 'leaflet'
 
 import { locationDataAtom } from '../atoms/locationDataAtom'
 import { modalWindowAtom } from '../atoms/modalWindowAtom'
@@ -25,17 +24,19 @@ function SetViewOnClick() {
 }
 
 function MapPage() {
-  // const [correntposition, setCorrentPosition] = useState({
-  //   latitude: 35.65862055760233,
-  //   longitude: 139.74543043734087,
-  // });
-
+  const api = import.meta.env.VITE_API_KEY
+  const map_key = import.meta.env.VITE_MAP_KEY
   const location = useLocation()
   const correntposition = location.state.correntposition
   console.log(correntposition)
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude) //座標オブジェクトLatLng
 
+  console.log('center', center)
+
+  const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number]
+
+  console.log('arrCenter', arrCenter)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
   const [arrDistance, setArrDistance] = useState([
     {
@@ -50,64 +51,29 @@ function MapPage() {
     },
   ])
 
-  // //仮の緯度軽度
-  // const arrDistance = [
-  //   {
-  //     name: 'ジブリパーク',
-  //     position: [35.1744374, 137.0901494],
-  //     likeCount: 29,
-  //   },
-  //   {
-  //     name: 'ikea',
-  //     position: [35.1762717, 137.0754212],
-  //     likeCount: 79,
-  //   },
-  // ]
+  const initializedRef = useRef(false)
 
   const MapBoundsLoggerFirst = () => {
     const mapFirst = useMap() //leafletのイベントハンドラを使うことができる
     useEffect(() => {
-      const bounds = mapFirst.getBounds()
-      const southWest = bounds.getSouthWest() // 左下
-      const northEast = bounds.getNorthEast() // 右上
-      // console.log('SouthWest.lat:', southWest.lat)
-      // console.log('SouthWest.lng:', southWest.lng) // 緯度・経度
-      // console.log('NorthEast.lat:', northEast.lat)
-      // console.log('NorthEast.lng:', northEast.lng)
-
+      if (initializedRef.current) return 
+      initializedRef.current = true
       const fetchData = async () => {
+        const bounds = mapFirst.getBounds()
+        const southWest = bounds.getSouthWest() // 左下
+        const northEast = bounds.getNorthEast() // 右上
+        console.log('SouthWest.lat:', southWest.lat)
+        console.log('SouthWest.lng:', southWest.lng) // 緯度・経度
+        console.log('NorthEast.lat:', northEast.lat)
+        console.log('NorthEast.lng:', northEast.lng)
         const data = await GetMethod(
-          `https://hottospot-backend-ex.umaminokiami.workers.dev/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
         )
+        console.log('data', data)
+        setArrDistance(data)
 
-        setArrDistance((prev) => [
-          ...prev,
-          ...data.map(
-            (d: {
-              explanation: string
-              latitude: number
-              likes: number
-              longitude: number
-              tags: string
-              tiktokTitle: string
-              url: string
-              userName: string
-            }) => ({
-              explanation: d.explanation,
-              latitude: d.latitude,
-              likes: d.likes,
-              longitude: d.longitude,
-              tags: d.tags,
-              tiktokTitle: d.tiktokTitle,
-              url: d.url,
-              userName: d.userName,
-            }),
-          ),
-        ])
+        console.log("initializedRef.curren",initializedRef.current)
       }
-
-      
-
       fetchData()
     }, [])
 
@@ -127,18 +93,6 @@ function MapPage() {
       },
     })
 
-    //console.log('zoomlevel', zoomLevel)
-
-    // if(zoomLevel >= 0){
-    //   setSendScale(3)
-    // }
-    // if(zoomLevel >= 0 && zoomLevel <= 8){
-    //   setSendScale(2)
-    // }
-    // if(zoomLevel <= 10){
-    //   setSendScale(3)
-    // }
-
     const map = useMapEvents({
       //leafletのイベントハンドラを使うことができる
       moveend: async () => {
@@ -149,7 +103,7 @@ function MapPage() {
         //console.log('zoom', zoomLevel)
 
         const data = await GetMethod(
-          `https://hottospot-backend-ex.umaminokiami.workers.dev/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
         )
         setArrDistance([])
         setArrDistance((prev) => [
@@ -182,45 +136,21 @@ function MapPage() {
     return null
   }
 
-  // console.log('bounds', bounds)
-  // console.log('arrDistance', arrDistance)
-
-  //距離の計算
-  // const R = Math.PI / 180
-  // function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
-  //   lat1 *= R
-  //   lng1 *= R
-  //   lat2 *= R
-  //   lng2 *= R
-  //   return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2))
-  // }
-
-  // arrDistance.map((d) => {
-  //   //console.log("d.position",d.position)
-  //   //現在の経度緯度、目的地の経度緯度
-  //   console.log('distance', distance(correntposition.latitude, correntposition.longitude, d.position[0], d.position[1]))
-  // })
-
-  const from = turf.point([correntposition.longitude, correntposition.latitude])
-  const to = turf.point([139.74543043734087, 35.65862055760233])
-  const d = turf.distance(from, to, { units: 'kilometers' })
-
-  console.log(`${d} km`)
 
   return (
     <>
       {modalWindowIsOpen && <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)} />}
       <div style={{ zIndex: '10', position: 'absolute' }}>
         <MapContainer
-          center={center}
-          zoom={13}
+          center={arrCenter}
+          zoom={11}
           scrollWheelZoom={false}
           // zoomControl={false} //ズームバー（開発時のみ)
           style={{ height: '100vh', width: '100vw' }}
           key={`${correntposition.latitude}-${correntposition.longitude}`} // ←座標が変わると再描画
         >
           <TileLayer
-            url="https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=ATIwUC2ahI1bMSEcMrXJ"
+            url={`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${map_key}`}
             attribution='<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
           />
 
@@ -228,7 +158,7 @@ function MapPage() {
           <MapBoundsLogger />
 
           <SetViewOnClick />
-          <Marker position={center} />
+          <Marker position={arrCenter} />
 
           {arrDistance.map((distance, index) => (
             <PinLocate
