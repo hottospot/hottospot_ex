@@ -12,48 +12,65 @@ function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
   const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
-
-
+  const [expanded,setExpanded] = useState(false)
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
 
+  const arr = position.tags ? JSON.parse(position.tags):undefined ;
+
+  console.log("arr",arr)
+  
+
+  //const jsonTitle = JSON.stringify(position.tags)
+
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
-    console.log("")
   }
 
   const handleClose = () => {
     console.log('閉じるボタンが押されました。')
-      setModalWindowIsOpen(false);
+    setModalWindowIsOpen(false)
   }
 
   const handleWalk = () => {
     console.log('徒歩ボタンが押されました。')
-    setSelectedTransport('walk');
+    setSelectedTransport('walk')
   }
 
   const handleCar = () => {
     console.log('車ボタンが押されました。')
-    setSelectedTransport('car');
+    setSelectedTransport('car')
   }
 
   const handleTrain = () => {
     console.log('電車ボタンが押されました。')
-    setSelectedTransport('train');
+    setSelectedTransport('train')
   }
   console.log('position', position)
 
-  console.log("modalWindowIsOpen", modalWindowIsOpen);
+  console.log('modalWindowIsOpen', modalWindowIsOpen)
+
+  const hashtagArr = arr.map((data:string) => `#${data}`)
+
+  const isLong         = hashtagArr.length >= 15;
+  const displayText = expanded || !isLong ? hashtagArr.length : hashtagArr.length.slice(0, 22) + "…";
+
+ 
 
   return (
     <div className={styles.container}>
       <div className={styles.whole}>
         <div className={styles.header}>
-          
-          <div className={styles.title}>{
-            position.place == "不明" ? (<div>{position.tags}</div>):(<div>{position.place}</div>)
-          }</div>
+          <div className={styles.title}>
+
+            {  position.place?.includes('不明') ? <div>{hashtagArr}</div> : <div>{displayText}</div>}
+            {
+              isLong && position.place?.includes('不明') && !expanded && (
+                <button onClick={() => setExpanded(true)}>詳しく見る</button>
+              )
+            }
+          </div>
 
           <div className={styles.buttons}>
             <div className={styles.share}>
@@ -68,13 +85,15 @@ function PlaceInfo() {
             </div>
           </div>
         </div>
-        <div className={styles.subtitle}>検索した場所の詳細</div>
-        <div>{position.tiktokTitle}</div>
+        <div className={styles.subtitle}>{position.tiktokTitle}</div>
+        
       </div>
 
       <div className={styles.middle}>
         <div className={styles.middleLeft}>
-          <div className={styles.img}>画像</div>
+
+            <img className={styles.img} src={position.photoName ?? undefined}/>
+
         </div>
         <div className={styles.middleRight}>
           <div className={styles.targetTitle}>目的地まで</div>
@@ -83,17 +102,17 @@ function PlaceInfo() {
 
           <div className={styles.waysButton}>
             <div className={styles.walk}>
-              <GradationIconButton color={selectedTransport ==="walk" ? "red" : "gray"} onClick={handleWalk}>
+              <GradationIconButton color={selectedTransport === 'walk' ? 'red' : 'gray'} onClick={handleWalk}>
                 <Icon icon="material-symbols:directions-walk-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.car}>
-              <GradationIconButton color={selectedTransport ==='car' ? "red" : "gray"} onClick={handleCar}>
+              <GradationIconButton color={selectedTransport === 'car' ? 'red' : 'gray'} onClick={handleCar}>
                 <Icon icon="ic:outline-directions-car" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.train}>
-              <GradationIconButton color={selectedTransport ==='train' ? "red" : "gray"} onClick={handleTrain}>
+              <GradationIconButton color={selectedTransport === 'train' ? 'red' : 'gray'} onClick={handleTrain}>
                 <Icon icon="material-symbols:train-outline-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>

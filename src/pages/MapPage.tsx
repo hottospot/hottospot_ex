@@ -84,6 +84,8 @@ function MapPage() {
 
   //console.log('bounds', bounds)
 
+  
+
   const MapBoundsLogger = () => {
     const mapzoom = useMap()
 
