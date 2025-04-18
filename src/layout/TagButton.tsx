@@ -14,7 +14,7 @@ export const TagButton = ({ children, color, isDisable, onClick }: TagButtonProp
     <div
       className={`${styles.container} ${isDisable ? styles.disable : styles[color]}`}
       onClick={() => {
-        if (onClick) {
+        if (onClick && !isDisable) {
           onClick();
         }
       }}

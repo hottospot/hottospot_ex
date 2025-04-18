@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useMap } from "react-leaflet";
+import { useAtomValue } from "jotai";
+import { useEffect, useRef, useState } from "react";
 import useMeasure from "react-use-measure";
 
+import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { SkipButton } from "../layout/SkipButton";
 import { TagButton } from "../layout/TagButton";
 
 import styles from "./Search.module.scss";
-import { useAtomValue } from "jotai";
-import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 
 export const Search = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -16,6 +15,8 @@ export const Search = () => {
   const [selectedAdjective, setSelectedAdjective] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [ref, { height }] = useMeasure();
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const setMapBounds = useAtomValue(MapBoundsAtom);
 
@@ -54,8 +55,22 @@ export const Search = () => {
     fetchData();
   }, [selectedAdjective, selectedPlace]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <motion.div
+      ref={containerRef}
       className={`${styles.container} ${isOpen && styles.openContainer}`}
       animate={{
         height: isOpen ? "180px" : `calc(${height}px + 24px)`,
