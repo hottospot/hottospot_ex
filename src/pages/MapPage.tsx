@@ -1,11 +1,12 @@
 import "leaflet/dist/leaflet.css";
 import * as turf from "@turf/turf";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 
 import { locationDataAtom } from "../atoms/locationDataAtom";
+import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
 import PinLocate from "../components/PinLocate";
 import { Search } from "../components/Search";
@@ -29,6 +30,8 @@ function MapPage() {
   //   longitude: 139.74543043734087,
   // })
   const [correntposition, setCorrentPosition] = useState({ latitude: 35.6586205576023, longitude: 139.74543043734087 });
+
+  const setMapBounds = useSetAtom(MapBoundsAtom);
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
@@ -72,6 +75,12 @@ function MapPage() {
       const bounds = mapFirst.getBounds();
       const southWest = bounds.getSouthWest(); // 左下
       const northEast = bounds.getNorthEast(); // 右上
+      setMapBounds({
+        northEastLat: northEast.lat,
+        southWestLat: southWest.lat,
+        northEastLng: northEast.lng,
+        southWestLng: southWest.lng,
+      });
       console.log("SouthWest.lat:", southWest.lat);
       console.log("SouthWest.lng:", southWest.lng); // 緯度・経度
       console.log("NorthEast.lat:", northEast.lat);
@@ -88,6 +97,12 @@ function MapPage() {
         const bounds = map.getBounds();
         const southWest = bounds.getSouthWest(); // 左下
         const northEast = bounds.getNorthEast(); // 右上
+        setMapBounds({
+          northEastLat: northEast.lat,
+          southWestLat: southWest.lat,
+          northEastLng: northEast.lng,
+          southWestLng: southWest.lng,
+        });
         console.log("SouthWest.lat:", southWest.lat);
         console.log("SouthWest.lng:", southWest.lng);
         console.log("NorthEast.lat:", northEast.lat);

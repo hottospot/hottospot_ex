@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMap } from "react-leaflet";
 import useMeasure from "react-use-measure";
 
 import { SkipButton } from "../layout/SkipButton";
 import { TagButton } from "../layout/TagButton";
 
 import styles from "./Search.module.scss";
+import { useAtomValue } from "jotai";
+import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 
 export const Search = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -14,8 +17,42 @@ export const Search = () => {
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [ref, { height }] = useMeasure();
 
+  const setMapBounds = useAtomValue(MapBoundsAtom);
+
   const placeList = ["カフェ", "絶景", "公園", "本屋", "美術館", "スイーツショップ"];
   const adjectiveList = ["おしゃれな", "かわいい", "スタイリッシュ", "映えてる", "かっこいい"];
+
+  const request = async () => {
+    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1&q=${selectedPlace}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) throw new Error("ネットワーク応答が正常ではありません");
+
+      const data = await response.json();
+      console.log("Success:", data);
+      return data;
+    } catch (error) {
+      console.error("Error:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (selectedAdjective && selectedPlace) {
+        const data = await request();
+        if (data) {
+          console.log("取得データ:", data);
+        }
+      }
+    };
+    fetchData();
+  }, [selectedAdjective, selectedPlace]);
 
   return (
     <motion.div
@@ -45,18 +82,21 @@ export const Search = () => {
                 <SkipButton
                   onClick={() => {
                     setPhase("place");
-                    console.log("おせてます");
                   }}
                 />
               </div>
               <div className={styles.dividerLine} />
               <div className={styles.optionTagList}>
-                {placeList.map((place, i) => (
+                {adjectiveList.map((adjective, i) => (
                   <TagButton
                     key={i}
                     color="blue"
+                    onClick={() => {
+                      setSelectedAdjective(adjective);
+                      setPhase("place");
+                    }}
                   >
-                    {place}
+                    {adjective}
                   </TagButton>
                 ))}
               </div>
@@ -72,12 +112,16 @@ export const Search = () => {
               <div className={styles.dividerLine} />
               <div className={styles.optionTagList}>
                 <TagButton color="blue">afldjs</TagButton>
-                {adjectiveList.map((adjective, i) => (
+                {placeList.map((place, i) => (
                   <TagButton
                     key={i}
                     color="blue"
+                    onClick={() => {
+                      setSelectedPlace(place);
+                      setPhase("place");
+                    }}
                   >
-                    {adjective}
+                    {place}
                   </TagButton>
                 ))}
               </div>
