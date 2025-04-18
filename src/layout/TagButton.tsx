@@ -6,11 +6,19 @@ type TagButtonProps = {
   children: ReactNode;
   color: "blue" | "green" | "red" | "orange" | "purple";
   isDisable?: boolean;
+  onClick?: () => void;
 };
 
-export const TagButton = ({ children, color, isDisable }: TagButtonProps) => {
+export const TagButton = ({ children, color, isDisable, onClick }: TagButtonProps) => {
   return (
-    <div className={`${styles.container} ${isDisable ? styles.disable : styles[color]}`}>
+    <div
+      className={`${styles.container} ${isDisable ? styles.disable : styles[color]}`}
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+    >
       <div className={styles.text}>{children}</div>
     </div>
   );

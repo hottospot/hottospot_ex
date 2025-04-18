@@ -13,7 +13,7 @@ function ModalSheet() {
 
   return (
     <div className={style.modalContainer}>
-      {modalWindowIsOpen ? (
+      {modalWindowIsOpen && (
         <motion.div
           style={{ height: "60%" }}
           className={style.container}
@@ -33,8 +33,6 @@ function ModalSheet() {
         >
           <PlaceInfo />
         </motion.div>
-      ) : (
-        <></>
       )}
     </div>
   );

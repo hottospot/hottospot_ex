@@ -9,6 +9,9 @@ import styles from "./Search.module.scss";
 
 export const Search = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [phase, setPhase] = useState<"adjective" | "place">("adjective");
+  const [selectedAdjective, setSelectedAdjective] = useState<string | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [ref, { height }] = useMeasure();
 
   const placeList = ["カフェ", "絶景", "公園", "本屋", "美術館", "スイーツショップ"];
@@ -22,50 +25,64 @@ export const Search = () => {
       }}
       initial={false}
       transition={{ duration: 0.16 }}
-      onClick={() => {
-        setIsOpen(!isOpen);
-      }}
     >
-      <div className={styles.placeholder}>見つけたい場所のジャンルを選択しよう !</div>
+      <div className={styles.placeholderContainer}>
+        <div
+          className={styles.placeholder}
+          onClick={() => setIsOpen(true)}
+        >
+          見つけたい場所のジャンルを選択しよう !
+        </div>
+        <div onClick={() => setIsOpen(false)}>×</div>
+      </div>
 
       {isOpen && (
         <motion.div className={styles.optionGroupWrapper}>
-          <div className={styles.optionGroup}>
-            <div className={styles.optionGroupHeader}>
-              <div className={styles.optionGroupTitle}>形容詞</div>
-              <SkipButton />
+          {phase === "adjective" && (
+            <div className={styles.optionGroup}>
+              <div className={styles.optionGroupHeader}>
+                <div className={styles.optionGroupTitle}>形容詞</div>
+                <SkipButton
+                  onClick={() => {
+                    setPhase("place");
+                    console.log("おせてます");
+                  }}
+                />
+              </div>
+              <div className={styles.dividerLine} />
+              <div className={styles.optionTagList}>
+                {placeList.map((place, i) => (
+                  <TagButton
+                    key={i}
+                    color="blue"
+                  >
+                    {place}
+                  </TagButton>
+                ))}
+              </div>
             </div>
-            <div className={styles.dividerLine} />
-            <div className={styles.optionTagList}>
-              {placeList.map((place, i) => (
-                <TagButton
-                  key={i}
-                  color="blue"
-                >
-                  {place}
-                </TagButton>
-              ))}
-            </div>
-          </div>
+          )}
 
-          <div className={styles.optionGroup}>
-            <div className={styles.optionGroupHeader}>
-              <div className={styles.optionGroupTitle}>場所</div>
-              <SkipButton />
+          {phase === "place" && (
+            <div className={styles.optionGroup}>
+              <div className={styles.optionGroupHeader}>
+                <div className={styles.optionGroupTitle}>場所</div>
+                <SkipButton />
+              </div>
+              <div className={styles.dividerLine} />
+              <div className={styles.optionTagList}>
+                <TagButton color="blue">afldjs</TagButton>
+                {adjectiveList.map((adjective, i) => (
+                  <TagButton
+                    key={i}
+                    color="blue"
+                  >
+                    {adjective}
+                  </TagButton>
+                ))}
+              </div>
             </div>
-            <div className={styles.dividerLine} />
-            <div className={styles.optionTagList}>
-              <TagButton color="blue">afldjs</TagButton>
-              {adjectiveList.map((adjective, i) => (
-                <TagButton
-                  key={i}
-                  color="blue"
-                >
-                  {adjective}
-                </TagButton>
-              ))}
-            </div>
-          </div>
+          )}
         </motion.div>
       )}
     </motion.div>

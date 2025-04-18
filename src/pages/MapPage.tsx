@@ -8,12 +8,10 @@ import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } fr
 import { locationDataAtom } from "../atoms/locationDataAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
 import PinLocate from "../components/PinLocate";
+import { Search } from "../components/Search";
 import ModalSheet from "../components/modalsheet/ModalSheet";
-import { TagButton } from "../layout/TagButton";
 
 import style from "./MapPage.module.scss";
-import { SkipButton } from "../layout/SkipButton";
-import { Search } from "../components/Search";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
