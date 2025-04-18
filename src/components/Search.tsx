@@ -23,6 +23,23 @@ export const Search = () => {
   const placeList = ["カフェ", "絶景", "公園", "本屋", "美術館", "スイーツショップ"];
   const adjectiveList = ["おしゃれな", "かわいい", "スタイリッシュ", "映えてる", "かっこいい"];
 
+  const adjectiveColors: Record<string, "blue" | "green" | "red" | "orange" | "purple"> = {
+    おしゃれな: "green",
+    かわいい: "orange",
+    スタイリッシュ: "purple",
+    映えてる: "blue",
+    かっこいい: "red",
+  };
+
+  const placeColors: Record<string, "blue" | "green" | "red" | "orange" | "purple"> = {
+    カフェ: "red",
+    絶景: "green",
+    公園: "orange",
+    本屋: "purple",
+    美術館: "blue",
+    スイーツショップ: "purple",
+  };
+
   const request = async () => {
     const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1&q=${selectedPlace}+${selectedAdjective}`;
 
@@ -90,8 +107,10 @@ export const Search = () => {
         >
           {selectedAdjective || selectedPlace ? (
             <div className={styles.selectedTags}>
-              {selectedAdjective && <TagButton color="blue">{selectedAdjective}</TagButton>}
-              {selectedPlace && <TagButton color="blue">{selectedPlace}</TagButton>}
+              {selectedAdjective && (
+                <TagButton color={adjectiveColors[selectedAdjective]}>{selectedAdjective}</TagButton>
+              )}
+              {selectedPlace && <TagButton color={placeColors[selectedPlace]}>{selectedPlace}</TagButton>}
             </div>
           ) : (
             <motion.div
@@ -140,7 +159,7 @@ export const Search = () => {
                   {adjectiveList.map((adjective, i) => (
                     <TagButton
                       key={i}
-                      color="blue"
+                      color={adjectiveColors[adjective]}
                       delay={i / 20}
                       onClick={() => {
                         setSelectedAdjective(adjective);
@@ -172,7 +191,7 @@ export const Search = () => {
                   {placeList.map((place, i) => (
                     <TagButton
                       key={i}
-                      color="blue"
+                      color={placeColors[place]}
                       delay={i / 20 + 0.2}
                       onClick={() => {
                         setSelectedPlace(place);
