@@ -17,7 +17,7 @@ function PlaceInfo() {
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
   const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
   const [duration, setDuration] = useState<{hour:string, mins:string}>();
-  const modes = ['driving', 'walking', 'bicycling', 'traist']
+  const modes = ['driving', 'walking', 'bicycling', 'transit']
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
@@ -128,7 +128,7 @@ function PlaceInfo() {
 
           <div className={styles.hour}>{duration?.hour}</div>
 
-          <div className={styles.minutes}>{duration?.mins}</div>
+          <div className={styles.minutes}>{duration?.mins || "ー"}</div>
 
           <div className={styles.url}>参考元リンク</div>
         </div>
