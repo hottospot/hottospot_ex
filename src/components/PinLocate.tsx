@@ -11,15 +11,18 @@ import { locationPositionAtom } from '../atoms/locationPositionAtom'
 interface PinLocateProps {
   setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>
   arrDistance: {
-    explanation: string;
-    latitude: number;
-    likes: number;
-    longitude: number;
-    tags: string;
-    tiktokTitle: string;
-    url: string;
-    userName: string;
-}[]
+    explanation: string
+    latitude: number
+    likes: number
+    longitude: number
+    tags: string
+    tiktokTitle: string
+    url: string
+    userName: string
+    title:string
+    photoName:string
+    place:string
+  }[]
   correntposition: {
     latitude: number
     longitude: number
@@ -38,12 +41,30 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
     },
   })
 
-  const handleOpen = (place: { latitude: number; longitude: number; tiktokTitle: string }) => {
+  const handleOpen = (place: {
+    tiktokTitle: string
+    explanation: string
+    tags: string
+    userName: string
+    url: string
+    title:string
+    latitude:number
+    longitude:number
+    likes:number
+    photoName:string
+    place:string
+  }) => {
     setModalWindowIsOpen(true)
     setPosition({
-      latitude: place.latitude,
-      longitude: place.longitude,
-      name: place.tiktokTitle,
+      explanation: place.explanation,
+      tags: place.tags,
+      tiktokTitle: place.tiktokTitle,
+      userName: place.userName,
+      url: place.url,
+      title:place.title,
+      likes:place.likes,
+      photoName:place.photoName,
+      place:place.place
     })
 
     // クリック時に地図を拡大
@@ -81,7 +102,6 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
     }
   }
 
-  
   function Icon(location: { likes: number }) {
     const showIcon =
       location.likes < 50

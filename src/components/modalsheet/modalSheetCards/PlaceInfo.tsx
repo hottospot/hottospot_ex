@@ -9,7 +9,7 @@ import styles from './PlaceInfo.module.scss'
 function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
   console.log('position', position)
-  console.log('"position.name', position.name)
+  console.log('"position.name', position.tiktokTitle)
 
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
@@ -30,11 +30,15 @@ function PlaceInfo() {
   const handleTrain = () => {
     console.log('電車ボタンが押されました。')
   }
+  console.log('position', position)
 
   return (
     <div className={styles.container}>
       <div className={styles.whole}>
         <div className={styles.header}>
+          {
+            position.place == "不明" ? (<div>{position.tags}</div>):(<div>{position.place}</div>)
+          }
           <div className={styles.title}>検索した場所</div>
 
           <div className={styles.buttons}>
@@ -50,9 +54,8 @@ function PlaceInfo() {
             </div>
           </div>
         </div>
-
         <div className={styles.subtitle}>検索した場所の詳細</div>
-         <div>{position.name}</div>
+        <div>{position.tiktokTitle}</div>
       </div>
 
       <div className={styles.middle}>
@@ -88,7 +91,7 @@ function PlaceInfo() {
 
           <div className={styles.url}>参考元リンク</div>
         </div>
-      </div>      
+      </div>
     </div>
   )
 }
