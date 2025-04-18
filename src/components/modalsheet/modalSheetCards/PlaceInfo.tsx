@@ -1,35 +1,49 @@
 import { Icon } from '@iconify/react'
 import { useAtom } from 'jotai'
+import { useState } from 'react'
 
 import { locationPositionAtom } from '../../../atoms/locationPositionAtom'
 import GradationIconButton from '../../../layout/GradationIconButton'
 
 import styles from './PlaceInfo.module.scss'
+import { modalWindowAtom } from '../../../atoms/modalWindowAtom'
 
 function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
+  const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
+  const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
+
+
+
   console.log('position', position)
   console.log('"position.name', position.name)
 
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
+    console.log("")
   }
 
   const handleClose = () => {
     console.log('閉じるボタンが押されました。')
+      setModalWindowIsOpen(false);
   }
 
   const handleWalk = () => {
     console.log('徒歩ボタンが押されました。')
+    setSelectedTransport('walk');
   }
 
   const handleCar = () => {
     console.log('車ボタンが押されました。')
+    setSelectedTransport('car');
   }
 
   const handleTrain = () => {
     console.log('電車ボタンが押されました。')
+    setSelectedTransport('train');
   }
+
+  console.log("modalWindowIsOpen", modalWindowIsOpen);
 
   return (
     <div className={styles.container}>
@@ -66,17 +80,17 @@ function PlaceInfo() {
 
           <div className={styles.waysButton}>
             <div className={styles.walk}>
-              <GradationIconButton color="gray" onClick={handleWalk}>
+              <GradationIconButton color={selectedTransport ==="walk" ? "red" : "gray"} onClick={handleWalk}>
                 <Icon icon="material-symbols:directions-walk-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.car}>
-              <GradationIconButton color="gray" onClick={handleCar}>
+              <GradationIconButton color={selectedTransport ==='car' ? "red" : "gray"} onClick={handleCar}>
                 <Icon icon="ic:outline-directions-car" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.train}>
-              <GradationIconButton color="gray" onClick={handleTrain}>
+              <GradationIconButton color={selectedTransport ==='train' ? "red" : "gray"} onClick={handleTrain}>
                 <Icon icon="material-symbols:train-outline-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
