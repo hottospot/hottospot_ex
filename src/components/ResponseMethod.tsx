@@ -1,5 +1,5 @@
-export const GetMethod = (link: string) => {
-    return fetch(link, { method: 'GET' })
+export const GetMethod = async (link: string) => {
+    return await fetch(link, { method: 'GET' })
       .then((res) => res.json()) //json方式でデータを受け取る
       .then((data) => {
         console.log('data:', data)
