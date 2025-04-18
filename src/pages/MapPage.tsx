@@ -142,6 +142,7 @@ function MapPage() {
 
   return (
     <>
+      <div className={style.gradationBackground} />
       <Search />
       {modalWindowIsOpen && (
         <div

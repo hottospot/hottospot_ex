@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import useMeasure from "react-use-measure";
@@ -24,7 +24,7 @@ export const Search = () => {
   const adjectiveList = ["おしゃれな", "かわいい", "スタイリッシュ", "映えてる", "かっこいい"];
 
   const request = async () => {
-    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1&q=${selectedPlace}`;
+    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1&q=${selectedPlace}+${selectedAdjective}`;
 
     try {
       const response = await fetch(url, {
@@ -81,69 +81,114 @@ export const Search = () => {
       <div className={styles.placeholderContainer}>
         <div
           className={styles.placeholder}
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            setIsOpen(true);
+            setSelectedAdjective(null);
+            setSelectedPlace(null);
+            setPhase("adjective");
+          }}
         >
-          見つけたい場所のジャンルを選択しよう !
+          {selectedAdjective || selectedPlace ? (
+            <div className={styles.selectedTags}>
+              {selectedAdjective && <TagButton color="blue">{selectedAdjective}</TagButton>}
+              {selectedPlace && <TagButton color="blue">{selectedPlace}</TagButton>}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5, ease: "easeOut", type: "spring" }}
+            >
+              見つけたい場所のジャンルを選択しよう !
+            </motion.div>
+          )}
         </div>
-        <div onClick={() => setIsOpen(false)}>×</div>
+        {(selectedAdjective || selectedPlace) && (
+          <div
+            onClick={() => {
+              setIsOpen(false);
+              setSelectedAdjective(null);
+              setSelectedPlace(null);
+            }}
+          >
+            ×
+          </div>
+        )}
       </div>
 
-      {isOpen && (
-        <motion.div className={styles.optionGroupWrapper}>
-          {phase === "adjective" && (
-            <div className={styles.optionGroup}>
-              <div className={styles.optionGroupHeader}>
-                <div className={styles.optionGroupTitle}>形容詞</div>
-                <SkipButton
-                  onClick={() => {
-                    setPhase("place");
-                  }}
-                />
-              </div>
-              <div className={styles.dividerLine} />
-              <div className={styles.optionTagList}>
-                {adjectiveList.map((adjective, i) => (
-                  <TagButton
-                    key={i}
-                    color="blue"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div className={styles.optionGroupWrapper}>
+            {phase === "adjective" && (
+              <motion.div
+                className={styles.optionGroup}
+                initial={{ y: 0 }}
+                animate={{ y: 0 }}
+                exit={{ y: -300 }}
+                transition={{ ease: "easeOut" }}
+              >
+                <div className={styles.optionGroupHeader}>
+                  <div className={styles.optionGroupTitle}>形容詞</div>
+                  <SkipButton
                     onClick={() => {
-                      setSelectedAdjective(adjective);
                       setPhase("place");
                     }}
-                  >
-                    {adjective}
-                  </TagButton>
-                ))}
-              </div>
-            </div>
-          )}
+                  />
+                </div>
+                <div className={styles.dividerLine} />
+                <div className={styles.optionTagList}>
+                  {adjectiveList.map((adjective, i) => (
+                    <TagButton
+                      key={i}
+                      color="blue"
+                      delay={i / 20}
+                      onClick={() => {
+                        setSelectedAdjective(adjective);
+                        setPhase("place");
+                      }}
+                    >
+                      {adjective}
+                    </TagButton>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
-          {phase === "place" && (
-            <div className={styles.optionGroup}>
-              <div className={styles.optionGroupHeader}>
-                <div className={styles.optionGroupTitle}>場所</div>
-                <SkipButton />
-              </div>
-              <div className={styles.dividerLine} />
-              <div className={styles.optionTagList}>
-                <TagButton color="blue">afldjs</TagButton>
-                {placeList.map((place, i) => (
-                  <TagButton
-                    key={i}
-                    color="blue"
-                    onClick={() => {
-                      setSelectedPlace(place);
-                      setPhase("place");
-                    }}
-                  >
-                    {place}
-                  </TagButton>
-                ))}
-              </div>
-            </div>
-          )}
-        </motion.div>
-      )}
+            {phase === "place" && (
+              <motion.div
+                key="place"
+                className={styles.optionGroup}
+                initial={{ y: 300 }}
+                animate={{ y: 0 }}
+                exit={{ y: -300 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+              >
+                <div className={styles.optionGroupHeader}>
+                  <div className={styles.optionGroupTitle}>場所</div>
+                  <SkipButton />
+                </div>
+                <div className={styles.dividerLine} />
+                <div className={styles.optionTagList}>
+                  {placeList.map((place, i) => (
+                    <TagButton
+                      key={i}
+                      color="blue"
+                      delay={i / 20 + 0.2}
+                      onClick={() => {
+                        setSelectedPlace(place);
+                        setPhase("place");
+                        setIsOpen(false);
+                      }}
+                    >
+                      {place}
+                    </TagButton>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

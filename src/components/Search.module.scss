@@ -3,7 +3,7 @@ $horizonPadding: 20px;
 .container {
   width: calc(94% - $horizonPadding * 2);
   height: fit-content;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: #ffffff;
   border: 2px solid #ffffff;
   backdrop-filter: blur(3px);
   display: flex;
@@ -24,6 +24,11 @@ $horizonPadding: 20px;
     width: 100%;
     .placeholder {
       color: #a7b9c7;
+      .selectedTags {
+        display: flex;
+        gap: 8px;
+        margin-top: -6px;
+      }
     }
   }
   .optionGroupWrapper {
@@ -31,7 +36,7 @@ $horizonPadding: 20px;
     flex-direction: column;
     gap: 24px;
     width: 100%;
-    height: 100%;
+    height: fit-content;
     overflow: hidden;
     .optionGroup {
       display: flex;
