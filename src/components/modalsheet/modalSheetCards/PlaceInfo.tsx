@@ -52,6 +52,7 @@ function PlaceInfo() {
         </div>
 
         <div className={styles.subtitle}>検索した場所の詳細</div>
+         <div>{position.name}</div>
       </div>
 
       <div className={styles.middle}>
@@ -87,7 +88,7 @@ function PlaceInfo() {
 
           <div className={styles.url}>参考元リンク</div>
         </div>
-      </div>
+      </div>      
     </div>
   )
 }

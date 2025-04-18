@@ -1,4 +1,4 @@
-import { SetStateAction, useAtom} from 'jotai'
+import { SetStateAction, useAtom } from 'jotai'
 import L from 'leaflet'
 import React, { useState } from 'react'
 import { Marker, useMap, useMapEvents } from 'react-leaflet'
@@ -8,62 +8,91 @@ import fireicon from '../../public/img/fireIcon.png'
 import greenicon from '../../public/img/greenIcon.png'
 import redicon from '../../public/img/redIcon.png'
 import { locationPositionAtom } from '../atoms/locationPositionAtom'
-
 interface PinLocateProps {
   setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>
   arrDistance: {
-    name: string
-    position: number[]
-    likeCount:number
-  }[]
+    explanation: string;
+    latitude: number;
+    likes: number;
+    longitude: number;
+    tags: string;
+    tiktokTitle: string;
+    url: string;
+    userName: string;
+}[]
+  correntposition: {
+    latitude: number
+    longitude: number
+  }
 }
 
-function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
-  console.log('locationData', arrDistance)
+function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLocateProps) {
   const map = useMap()
-  const [zoomLevel, setZoomLevel] = useState(map.getZoom());
+  const [zoomLevel, setZoomLevel] = useState(map.getZoom())
 
-
-  const [position, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
-  //   const locationArr = Object.values(locationData)
+  const [__, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
 
   useMapEvents({
-      zoomend: () => {
-        setZoomLevel(map.getZoom());
-      },
-    });
+    zoomend: () => {
+      setZoomLevel(map.getZoom())
+    },
+  })
 
-  console.log("zoomLevel",zoomLevel)
-  const handleOpen = (location:{position:number[],name:string}) => {
-    console.log('location[0]', location.position[0])
-    console.log('location[0]', location.name)
+  const handleOpen = (place: { latitude: number; longitude: number; tiktokTitle: string }) => {
     setModalWindowIsOpen(true)
     setPosition({
-      latitude: location.position[0],
-      longitude: location.position[1],
-      name: location.name,
+      latitude: place.latitude,
+      longitude: place.longitude,
+      name: place.tiktokTitle,
     })
 
     // クリック時に地図を拡大
-    map.setView([location.position[0], location.position[1]], 13, {
+    map.setView([place.latitude, place.longitude], 13, {
       animate: true,
     })
+
+    const R = Math.PI / 180
+    function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
+      lat1 *= R
+      lng1 *= R
+      lat2 *= R
+      lng2 *= R
+      return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2))
+    }
+
+    const road = distance(correntposition.latitude, correntposition.longitude, place.latitude, place.longitude)
+
+    // console.log("road",road);
+
+    const walk = road / 0.08
+    console.log('walk', walk)
+
+    const car = road / 34
+    console.log('car', car)
+
+    const train = road / 100
+    console.log('train', train)
+
+    if (car < 1) {
+      console.log('carMini', car * 60)
+    }
+    if (train < 1) {
+      console.log('trainMini', train * 60)
+    }
   }
 
-  console.log("position",position)
-
-  function Icon(location:{likeCount:number}) {
+  
+  function Icon(location: { likes: number }) {
     const showIcon =
-      location.likeCount < 50
-        ? {icon:blueicon,zoomlevel:11}
-        : location.likeCount >= 50 && location.likeCount < 100
-        ? {icon:greenicon,zoomlevel:9}
-        : location.likeCount >= 100 && location.likeCount < 200
-        ? {icon:redicon,zoomlevel:7}
-        : {icon:fireicon,zoomlevel:0}
+      location.likes < 50
+        ? { icon: blueicon, zoomlevel: 11 }
+        : location.likes >= 50 && location.likes < 100
+          ? { icon: greenicon, zoomlevel: 9 }
+          : location.likes >= 100 && location.likes < 200
+            ? { icon: redicon, zoomlevel: 7 }
+            : { icon: fireicon, zoomlevel: 0 }
 
-
-    if(zoomLevel >= showIcon.zoomlevel){
+    if (zoomLevel >= showIcon.zoomlevel) {
       return L.divIcon({
         className: 'custom-marker',
         html: `
@@ -74,34 +103,32 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
                 color:white;
                   display: flex; top:16px; justify-content: center;
                   font-weight: bold; font-size: 12px;">
-                  ${location.likeCount}
+                  ${location.likes}
                 </div>
               </div>
               `,
         iconSize: [50, 50],
         iconAnchor: [25, 25],
       })
-    }
-    else{
+    } else {
       return L.divIcon({
         className: 'custom-marker',
         html: ``,
         iconSize: [50, 50],
         iconAnchor: [25, 25],
-    })
-    
+      })
+    }
   }
-}
 
   return (
     <div>
-      {arrDistance.map((location, index) => (
+      {arrDistance.map((place, index) => (
         //   console.log("location",location.position[0])
         <Marker
-          position={[location.position[0], location.position[1]]}
-          icon={Icon(location)}
+          position={[place.latitude, place.longitude]}
+          icon={Icon(place)}
           key={index}
-          eventHandlers={{ click: () => handleOpen(location) }}
+          eventHandlers={{ click: () => handleOpen(place) }}
         />
       ))}
     </div>
