@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useAtom } from 'jotai'
-import { LatLng, map } from 'leaflet'
+import { LatLng } from 'leaflet'
 
-import { locationDataAtom } from '../atoms/locationDataAtom'
 import { modalWindowAtom } from '../atoms/modalWindowAtom'
 import ModalSheet from '../components/modalsheet/ModalSheet'
 
@@ -160,7 +159,7 @@ function MapPage() {
           <SetViewOnClick />
           <Marker position={arrCenter} />
 
-          {arrDistance.map((distance, index) => (
+          {arrDistance.map((__, index) => (
             <PinLocate
               setModalWindowIsOpen={setModalWindowIsOpen}
               arrDistance={arrDistance}

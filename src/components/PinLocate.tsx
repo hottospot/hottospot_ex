@@ -30,7 +30,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
   const map = useMap()
   const [zoomLevel, setZoomLevel] = useState(map.getZoom())
 
-  const [position, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
+  const [__, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
 
   useMapEvents({
     zoomend: () => {
