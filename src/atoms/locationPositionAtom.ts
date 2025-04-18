@@ -10,6 +10,8 @@ interface locationPositionAtomProps {
   url?: string | null;
   userName?: string | null;
   place?: string | null;
+  latitude?:number | null;
+  longitude?:number | null;
 }
 export const locationPositionAtom = atom<locationPositionAtomProps>({
   explanation:null,
@@ -18,5 +20,7 @@ export const locationPositionAtom = atom<locationPositionAtomProps>({
   tiktokTitle:null,
   photoName:null,
   userName:null,
-  place:null
+  place:null,
+  latitude:null,
+  longitude:null
 })

@@ -64,7 +64,9 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
       title:place.title,
       likes:place.likes,
       photoName:place.photoName,
-      place:place.place
+      place:place.place,
+      latitude:place.latitude,
+      longitude:place.longitude
     })
 
     // クリック時に地図を拡大

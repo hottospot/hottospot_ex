@@ -50,10 +50,10 @@ function PlaceInfo() {
     <div className={styles.container}>
       <div className={styles.whole}>
         <div className={styles.header}>
-          {
+          
+          <div className={styles.title}>{
             position.place == "不明" ? (<div>{position.tags}</div>):(<div>{position.place}</div>)
-          }
-          <div className={styles.title}>検索した場所</div>
+          }</div>
 
           <div className={styles.buttons}>
             <div className={styles.share}>
