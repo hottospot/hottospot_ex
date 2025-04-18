@@ -47,6 +47,9 @@ function MapPage() {
       tiktokTitle: '',
       url: '',
       userName: '',
+      photoName:'',
+      title:'',
+      place:''
     },
   ])
 
@@ -55,7 +58,7 @@ function MapPage() {
   const MapBoundsLoggerFirst = () => {
     const mapFirst = useMap() //leafletのイベントハンドラを使うことができる
     useEffect(() => {
-      if (initializedRef.current) return 
+      if (initializedRef.current) return
       initializedRef.current = true
       const fetchData = async () => {
         const bounds = mapFirst.getBounds()
@@ -71,7 +74,7 @@ function MapPage() {
         console.log('data', data)
         setArrDistance(data)
 
-        console.log("initializedRef.curren",initializedRef.current)
+        console.log('initializedRef.curren', initializedRef.current)
       }
       fetchData()
     }, [])
@@ -84,7 +87,7 @@ function MapPage() {
   const MapBoundsLogger = () => {
     const mapzoom = useMap()
 
-    const [__, setZoomLevel] = useState(mapzoom.getZoom())
+    const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom())
 
     useMapEvents({
       zoomend: () => {
@@ -92,6 +95,15 @@ function MapPage() {
       },
     })
 
+    console.log('zoomLevel', zoomLevel)
+
+    let sendZoom = 0
+
+    if (zoomLevel < 8 && zoomLevel > 7) {
+      sendZoom = 3
+    }
+
+    console.log('sendZoom', sendZoom)
     const map = useMapEvents({
       //leafletのイベントハンドラを使うことができる
       moveend: async () => {
@@ -117,6 +129,9 @@ function MapPage() {
               tiktokTitle: string
               url: string
               userName: string
+              title:string
+              photoName:string
+              place:string
             }) => ({
               explanation: d.explanation,
               latitude: d.latitude,
@@ -126,6 +141,9 @@ function MapPage() {
               tiktokTitle: d.tiktokTitle,
               url: d.url,
               userName: d.userName,
+              title:d.title,
+              photoName:d.photoName,
+              place:d.place
             }),
           ),
         ])
@@ -134,7 +152,6 @@ function MapPage() {
 
     return null
   }
-
 
   return (
     <>
