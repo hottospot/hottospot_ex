@@ -8,19 +8,26 @@ import GradationIconButton from '../../../layout/GradationIconButton'
 import styles from './PlaceInfo.module.scss'
 import { modalWindowAtom } from '../../../atoms/modalWindowAtom'
 
+import { GetMethod } from '../../ResponseMethod'
+import { nowPositionAtom } from '../../../atoms/nowPositionAtom'
+
 function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
+  const [nowposition] = useAtom(nowPositionAtom)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
   const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
-
-
+  const [duration, setDuration] = useState<{hour:string, mins:string}>();
+  const modes = ['driving', 'walking', 'bicycling', 'traist']
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
 
+  const apiUrl = import.meta.env.VITE_API_KEY
+
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
-    console.log("")
+    const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
+    window.open(shareUrl);
   }
 
   const handleClose = () => {
@@ -28,23 +35,43 @@ function PlaceInfo() {
       setModalWindowIsOpen(false);
   }
 
-  const handleWalk = () => {
+  const handleWalk = async () => {
     console.log('徒歩ボタンが押されました。')
+    console.log("nowposition", nowposition);
     setSelectedTransport('walk');
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[1]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("walkminuts", res.routes.duration);
+    setDuration(res.routes.duration);
+    
+    
   }
 
-  const handleCar = () => {
+  const handleCar = async () => {
     console.log('車ボタンが押されました。')
     setSelectedTransport('car');
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("carminuts", res.routes.duration);
+    setDuration(res.routes.duration);
   }
 
-  const handleTrain = () => {
+  const handleTrain = async () => {
     console.log('電車ボタンが押されました。')
     setSelectedTransport('train');
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("trainminuts", res.routes.duration);
+    setDuration(res.routes.duration);
   }
   console.log('position', position)
 
   console.log("modalWindowIsOpen", modalWindowIsOpen);
+  console.log("duration", duration);
+  console.log("duration[0]", duration?.hour);
 
   return (
     <div className={styles.container}>
@@ -99,9 +126,9 @@ function PlaceInfo() {
             </div>
           </div>
 
-          <div className={styles.hour}>231時間</div>
+          <div className={styles.hour}>{duration?.hour}</div>
 
-          <div className={styles.minutes}>30分</div>
+          <div className={styles.minutes}>{duration?.mins}</div>
 
           <div className={styles.url}>参考元リンク</div>
         </div>

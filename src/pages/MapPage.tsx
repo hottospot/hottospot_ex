@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { LatLng } from 'leaflet'
 
 import { modalWindowAtom } from '../atoms/modalWindowAtom'
@@ -11,6 +11,8 @@ import style from './MapPage.module.scss'
 import PinLocate from '../components/PinLocate'
 import { GetMethod } from '../components/ResponseMethod'
 import { useLocation } from 'react-router-dom'
+
+import { nowPositionAtom } from '../atoms/nowPositionAtom'
 
 function SetViewOnClick() {
   const map = useMapEvent('click', (e) => {
@@ -37,6 +39,9 @@ function MapPage() {
 
   console.log('arrCenter', arrCenter)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
+  const setNowPostion = useSetAtom(nowPositionAtom);
+  setNowPostion(arrCenter);
+
   const [arrDistance, setArrDistance] = useState([
     {
       explanation: '',
@@ -69,7 +74,7 @@ function MapPage() {
         console.log('NorthEast.lat:', northEast.lat)
         console.log('NorthEast.lng:', northEast.lng)
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
         )
         console.log('data', data)
         setArrDistance(data)
@@ -114,7 +119,7 @@ function MapPage() {
         //console.log('zoom', zoomLevel)
 
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
         )
         setArrDistance([])
         setArrDistance((prev) => [
