@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import * as turf from "@turf/turf";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
@@ -11,11 +11,13 @@ import PinLocate from "../components/PinLocate";
 import { Search } from "../components/Search";
 import ModalSheet from "../components/modalsheet/ModalSheet";
 
-import style from './MapPage.module.scss'
-import { GetMethod } from '../components/ResponseMethod'
-import { useLocation } from 'react-router-dom'
+import style from "./MapPage.module.scss";
+import { GetMethod } from "../components/ResponseMethod";
+import { useLocation } from "react-router-dom";
 
-import { nowPositionAtom } from '../atoms/nowPositionAtom'
+import { nowPositionAtom } from "../atoms/nowPositionAtom";
+import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
+import { isSearchAtom } from "../atoms/isSearchAtom";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -28,101 +30,89 @@ function SetViewOnClick() {
 }
 
 function MapPage() {
-  const api = import.meta.env.VITE_API_KEY
-  const map_key = import.meta.env.VITE_MAP_KEY
-  const location = useLocation()
-  const correntposition = location.state.correntposition
-  console.log(correntposition)
+  const api = import.meta.env.VITE_API_KEY;
+  const map_key = import.meta.env.VITE_MAP_KEY;
+  const location = useLocation();
+  const correntposition = location.state.correntposition;
+  console.log(correntposition);
   const setMapBounds = useSetAtom(MapBoundsAtom);
+  const [arrDistance, setArrDistance] = useAtom(arrDistanceAtom);
+  const isSearch = useAtomValue(isSearchAtom);
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
-  console.log('center', center)
+  console.log("center", center);
 
-  const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number]
+  const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number];
 
-  console.log('arrCenter', arrCenter)
-  const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
+  console.log("arrCenter", arrCenter);
+  const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom);
   const setNowPostion = useSetAtom(nowPositionAtom);
   setNowPostion(arrCenter);
 
-  const [arrDistance, setArrDistance] = useState([
-    {
-      explanation: '',
-      latitude: 0,
-      likes: 0,
-      longitude: 0,
-      tags: '',
-      tiktokTitle: '',
-      url: '',
-      userName: '',
-      photoName:'',
-      title:'',
-      place:''
-    },
-  ])
-
-  const initializedRef = useRef(false)
+  const initializedRef = useRef(false);
 
   const MapBoundsLoggerFirst = () => {
-    const mapFirst = useMap() //leafletのイベントハンドラを使うことができる
+    const mapFirst = useMap(); //leafletのイベントハンドラを使うことができる
     useEffect(() => {
-      if (initializedRef.current) return
-      initializedRef.current = true
+      if (initializedRef.current) return;
+      initializedRef.current = true;
       const fetchData = async () => {
         const bounds = mapFirst.getBounds();
         const southWest = bounds.getSouthWest(); // 左下
         const northEast = bounds.getNorthEast(); // 右上
         setMapBounds({
-        northEastLat: northEast.lat,
-        southWestLat: southWest.lat,
-        northEastLng: northEast.lng,
-        southWestLng: southWest.lng,
-      });
-      console.log("SouthWest.lat:", southWest.lat);
+          northEastLat: northEast.lat,
+          southWestLat: southWest.lat,
+          northEastLng: northEast.lng,
+          southWestLng: southWest.lng,
+        });
+        console.log("SouthWest.lat:", southWest.lat);
         console.log("SouthWest.lng:", southWest.lng); // 緯度・経度
         console.log("NorthEast.lat:", northEast.lat);
         console.log("NorthEast.lng:", northEast.lng);
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
-        )
-        console.log('data', data)
-        setArrDistance(data)
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`
+        );
+        console.log("data", data);
+        setArrDistance(data);
 
-        console.log('initializedRef.curren', initializedRef.current)
-      }
-      fetchData()
+        console.log("initializedRef.curren", initializedRef.current);
+      };
+      fetchData();
     }, []);
 
     return null;
   };
 
   const MapBoundsLogger = () => {
-    const mapzoom = useMap()
+    const mapzoom = useMap();
 
-    const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom())
+    const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom());
 
     useMapEvents({
       zoomend: () => {
-        setZoomLevel(mapzoom.getZoom())
+        setZoomLevel(mapzoom.getZoom());
       },
-    })
+    });
 
-    console.log('zoomLevel', zoomLevel)
+    console.log("zoomLevel", zoomLevel);
 
-    let sendZoom = 0
+    let sendZoom = 0;
 
     if (zoomLevel < 8 && zoomLevel > 7) {
-      sendZoom = 3
+      sendZoom = 3;
     }
 
-    console.log('sendZoom', sendZoom)
+    console.log("sendZoom", sendZoom);
     const map = useMapEvents({
       //leafletのイベントハンドラを使うことができる
-      moveend: async() => {
-        const bounds = map.getBounds()
-        const southWest = bounds.getSouthWest() // 左下
-        const northEast = bounds.getNorthEast() // 右上
+      moveend: async () => {
+        if (isSearch) return; // 検索している時にデータ取得をスキップ
+
+        const bounds = map.getBounds();
+        const southWest = bounds.getSouthWest(); // 左下
+        const northEast = bounds.getNorthEast(); // 右上
 
         setMapBounds({
           northEastLat: northEast.lat,
@@ -130,31 +120,31 @@ function MapPage() {
           northEastLng: northEast.lng,
           southWestLng: southWest.lng,
         });
-        console.log('SouthWest.lat:', southWest.lat)
-        console.log('SouthWest.lng:', southWest.lng) 
-        console.log('NorthEast.lat:', northEast.lat)
-        console.log('NorthEast.lng:', northEast.lng)
+        console.log("SouthWest.lat:", southWest.lat);
+        console.log("SouthWest.lng:", southWest.lng);
+        console.log("NorthEast.lat:", northEast.lat);
+        console.log("NorthEast.lng:", northEast.lng);
 
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
-        )
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`
+        );
 
-        setArrDistance([])
+        setArrDistance([]);
         setArrDistance((prev) => [
           ...prev,
           ...data.map(
             (d: {
-              explanation: string
-              latitude: number
-              likes: number
-              longitude: number
-              tags: string
-              tiktokTitle: string
-              url: string
-              userName: string
-              title:string
-              photoName:string
-              place:string
+              explanation: string;
+              latitude: number;
+              likes: number;
+              longitude: number;
+              tags: string;
+              tiktokTitle: string;
+              url: string;
+              userName: string;
+              title: string;
+              photoName: string;
+              place: string;
             }) => ({
               explanation: d.explanation,
               latitude: d.latitude,
@@ -164,12 +154,12 @@ function MapPage() {
               tiktokTitle: d.tiktokTitle,
               url: d.url,
               userName: d.userName,
-              title:d.title,
-              photoName:d.photoName,
-              place:d.place
-            }),
+              title: d.title,
+              photoName: d.photoName,
+              place: d.place,
+            })
           ),
-        ])
+        ]);
       },
     });
 
@@ -189,10 +179,7 @@ function MapPage() {
   arrDistance.map((d) => {
     //console.log("d.position",d.position)
     //現在の経度緯度、目的地の経度緯度
-    console.log(
-      "distance",
-      distance(correntposition.latitude, correntposition.longitude, d.latitude, d.longitude)
-    );
+    console.log("distance", distance(correntposition.latitude, correntposition.longitude, d.latitude, d.longitude));
   });
 
   // console.log(`arrDistanceの距離${arrDistance}`);

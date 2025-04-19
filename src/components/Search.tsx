@@ -1,14 +1,16 @@
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import useMeasure from "react-use-measure";
 
+import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
+import { isSearchAtom } from "../atoms/isSearchAtom";
 import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { SkipButton } from "../layout/SkipButton";
 import { TagButton } from "../layout/TagButton";
 
 import styles from "./Search.module.scss";
-import { Icon } from "@iconify/react/dist/iconify.js";
 
 export const Search = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -17,15 +19,17 @@ export const Search = () => {
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [ref, { height }] = useMeasure();
 
+  const setArrDistance = useSetAtom(arrDistanceAtom);
+  const setMapBounds = useAtomValue(MapBoundsAtom);
+  const setIsSearch = useSetAtom(isSearchAtom);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setMapBounds = useAtomValue(MapBoundsAtom);
-
-  const placeList = ["カフェ", "絶景", "公園", "本屋", "美術館", "スイーツショップ"];
-  const adjectiveList = ["おしゃれな", "かわいい", "スタイリッシュ", "映えてる", "かっこいい"];
+  const placeList = ["カフェ", "絶景", "公園", "本屋", "美術館", "スイーツ", "レストラン"];
+  const adjectiveList = ["おしゃれ", "かわいい", "スタイリッシュ", "映えてる", "かっこいい"];
 
   const adjectiveColors: Record<string, "blue" | "green" | "red" | "orange" | "purple"> = {
-    おしゃれな: "green",
+    おしゃれ: "green",
     かわいい: "orange",
     スタイリッシュ: "purple",
     映えてる: "blue",
@@ -38,7 +42,8 @@ export const Search = () => {
     公園: "orange",
     本屋: "purple",
     美術館: "blue",
-    スイーツショップ: "purple",
+    スイーツ: "purple",
+    レストラン: "green",
   };
 
   const request = async () => {
@@ -46,7 +51,8 @@ export const Search = () => {
     if (selectedPlace) queryParts.push(selectedPlace);
     if (selectedAdjective) queryParts.push(selectedAdjective);
     const query = queryParts.join("+").trim();
-    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1${query && `&q=${encodeURIComponent(query)}`}`;
+    console.log(query);
+    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=2${query && `&q=${query}`}`;
 
     try {
       const response = await fetch(url, {
@@ -58,6 +64,7 @@ export const Search = () => {
 
       const data = await response.json();
       console.log("Success:", data);
+      setArrDistance(data);
       return data;
     } catch (error) {
       console.error("Error:", error);
@@ -70,6 +77,9 @@ export const Search = () => {
       if (!selectedAdjective && !selectedPlace) return;
       await request();
     };
+    if (selectedAdjective || selectedPlace) setIsSearch(true);
+    else setIsSearch(false);
+
     fetchData();
   }, [selectedAdjective, selectedPlace]);
 
@@ -195,7 +205,7 @@ export const Search = () => {
               >
                 <div className={styles.optionGroupHeader}>
                   <div className={styles.optionGroupTitle}>場所</div>
-                  <SkipButton />
+                  <SkipButton onClick={() => setIsOpen(false)} />
                 </div>
                 <div className={styles.dividerLine} />
                 <div className={styles.optionTagList}>
@@ -206,7 +216,6 @@ export const Search = () => {
                       delay={i / 20 + 0.2}
                       onClick={() => {
                         setSelectedPlace(place);
-                        setPhase("place");
                         setIsOpen(false);
                       }}
                     >
