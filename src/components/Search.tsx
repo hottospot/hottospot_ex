@@ -8,13 +8,14 @@ import { SkipButton } from "../layout/SkipButton";
 import { TagButton } from "../layout/TagButton";
 
 import styles from "./Search.module.scss";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 export const Search = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [phase, setPhase] = useState<"adjective" | "place">("adjective");
   const [selectedAdjective, setSelectedAdjective] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [__, { height }] = useMeasure();
+  const [ref, { height }] = useMeasure();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +42,11 @@ export const Search = () => {
   };
 
   const request = async () => {
-    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1&q=${selectedPlace}+${selectedAdjective}`;
+    const queryParts = [];
+    if (selectedPlace) queryParts.push(selectedPlace);
+    if (selectedAdjective) queryParts.push(selectedAdjective);
+    const query = queryParts.join("+").trim();
+    const url = `${import.meta.env.VITE_API_KEY}/markers?latMin=${setMapBounds.southWestLat}&latMax=${setMapBounds.northEastLat}&lngMin=${setMapBounds.southWestLng}&lngMax=${setMapBounds.northEastLng}&scale=1${query && `&q=${encodeURIComponent(query)}`}`;
 
     try {
       const response = await fetch(url, {
@@ -62,12 +67,8 @@ export const Search = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (selectedAdjective && selectedPlace) {
-        const data = await request();
-        if (data) {
-          console.log("取得データ:", data);
-        }
-      }
+      if (!selectedAdjective && !selectedPlace) return;
+      await request();
     };
     fetchData();
   }, [selectedAdjective, selectedPlace]);
@@ -113,13 +114,19 @@ export const Search = () => {
               {selectedPlace && <TagButton color={placeColors[selectedPlace]}>{selectedPlace}</TagButton>}
             </div>
           ) : (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5, ease: "easeOut", type: "spring" }}
-            >
-              見つけたい場所のジャンルを選択しよう !
-            </motion.div>
+            <>
+              <Icon
+                icon={"heroicons:magnifying-glass-16-solid"}
+                width={"24px"}
+              />
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut", type: "spring" }}
+              >
+                見つけたい場所のジャンルを選択しよう !
+              </motion.div>
+            </>
           )}
         </div>
         {(selectedAdjective || selectedPlace) && (
@@ -130,7 +137,11 @@ export const Search = () => {
               setSelectedPlace(null);
             }}
           >
-            ×
+            <Icon
+              icon={"line-md:close"}
+              color="#758693"
+              width={"20px"}
+            />
           </div>
         )}
       </div>
