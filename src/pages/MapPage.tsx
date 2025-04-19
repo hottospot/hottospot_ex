@@ -14,7 +14,6 @@ import style from "./MapPage.module.scss";
 import { GetMethod } from "../components/ResponseMethod";
 import { useLocation } from "react-router-dom";
 
-
 import { sendZoomAtom } from "../atoms/sendZoomAtom";
 import { nowPositionAtom } from "../atoms/nowPositionAtom";
 import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
@@ -43,7 +42,7 @@ function MapPage() {
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
-  console.log('center', center)
+  console.log("center", center);
 
   const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number];
 
@@ -179,14 +178,11 @@ function MapPage() {
 
   return (
     <>
+      <div className={style.form}>
+        <ModalSheet />
+      </div>
       <div className={style.gradationBackground} />
       <Search />
-      {modalWindowIsOpen && (
-        <div
-          className={style.modalOverlay}
-          onClick={() => setModalWindowIsOpen(false)}
-        />
-      )}
       <div style={{ zIndex: "10", position: "absolute" }}>
         <MapContainer
           center={arrCenter}
@@ -215,9 +211,6 @@ function MapPage() {
             correntposition={correntposition}
           />
         </MapContainer>
-      </div>
-      <div className={style.form}>
-        <ModalSheet />
       </div>
     </>
   );
