@@ -31,7 +31,7 @@ interface PinLocateProps {
   };
 }
 
-function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLocateProps) {
+function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   const map = useMap();
   const [zoomLevel, setZoomLevel] = useState(map.getZoom());
 
