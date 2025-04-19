@@ -6,7 +6,6 @@ import { Marker, useMap, useMapEvents } from 'react-leaflet'
 import blueicon from '../../public/img/blueIcon.png'
 import fireicon from '../../public/img/fireIcon.png'
 import greenicon from '../../public/img/greenIcon.png'
-import redicon from '../../public/img/redIcon.png'
 import { locationPositionAtom } from '../atoms/locationPositionAtom'
 interface PinLocateProps {
   setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>;
@@ -31,7 +30,7 @@ interface PinLocateProps {
 
 function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLocateProps) {
   const map = useMap()
-  const [zoomLevel, setZoomLevel] = useState(map.getZoom())
+  const [, setZoomLevel] = useState(map.getZoom())
 
   const [__, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
 
