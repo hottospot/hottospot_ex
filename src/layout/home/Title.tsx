@@ -1,6 +1,6 @@
-import icon from "../../../public/img/icon.svg";
+import icon from '../../../public/img/icon.svg';
 
-import style from "./Title.module.scss";
+import style from './Title.module.scss';
 
 function Title() {
   return (
@@ -11,7 +11,7 @@ function Title() {
       />
       <div className={style.hottospot}>Hottospot</div>
     </div>
-  );
+  )
 }
 
-export default Title;
+export default Title

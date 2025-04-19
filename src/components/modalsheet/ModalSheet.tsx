@@ -9,8 +9,6 @@ import PlaceInfo from "./modalSheetCards/PlaceInfo";
 function ModalSheet() {
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom);
 
-  console.log("modalWindowIsOpen", modalWindowIsOpen);
-
   return (
     <div className={style.modalContainer}>
       {modalWindowIsOpen && (

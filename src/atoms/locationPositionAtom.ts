@@ -1,14 +1,28 @@
 import { atom } from "jotai";
 
 interface locationPositionAtomProps {
-  latitude: number | null;
-  longitude: number | null;
-  name: string | null;
+  explanation?: string | null;
+  likes?: number | null;
+  tags?: string | null;
+  tiktokTitle?: string | null;
+  photoName?: string | null;
+  title?: string | null;
+  url?: string | null;
+  userName?: string | null;
+  place?: string | null;
+  latitude?:number | null;
+  longitude?:number | null;
 }
 export const locationPositionAtom = atom<locationPositionAtomProps>({
-  latitude: null,
-  longitude: null,
-  name: null,
+  explanation:null,
+  likes:null,
+  tags:null,
+  tiktokTitle:null,
+  photoName:null,
+  userName:null,
+  place:null,
+  latitude:null,
+  longitude:null
 });
 
 interface MapBoundsAtomProps {
