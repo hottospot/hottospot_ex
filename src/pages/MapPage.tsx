@@ -103,14 +103,14 @@ function MapPage() {
     if (zoomLevel < 8) {
       setSendZoom(4);
     }
-    if (zoomLevel >= 8 && zoomLevel < 10) {
+    if (zoomLevel >= 8 && zoomLevel < 12) {
       setSendZoom(3);
     }
-    if (zoomLevel >= 10 && zoomLevel < 12) {
+    if (zoomLevel >= 12 && zoomLevel < 14) {
       setSendZoom(2);
     }
 
-    if (zoomLevel >= 12) {
+    if (zoomLevel >= 14) {
       setSendZoom(1);
     }
     console.log("sendZoom", sendZoom);
