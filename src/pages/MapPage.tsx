@@ -5,7 +5,6 @@ import { LatLng } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 
-import { locationDataAtom } from "../atoms/locationDataAtom";
 import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
 import PinLocate from "../components/PinLocate";
