@@ -97,6 +97,8 @@ function PlaceInfo() {
   }
   console.log('position', position)
 
+
+
   console.log('modalWindowIsOpen', modalWindowIsOpen)
 
   // const hashtagArr = arr.map((data:string) => `#${data}`)
@@ -178,6 +180,7 @@ function PlaceInfo() {
           <div className={styles.hour}>{duration?.hour}</div>
 
           <div className={styles.minutes}>{duration?.mins || "ー"}</div>
+
 
           {position.url ? (
             <a className={styles.url} href={position.url}>
