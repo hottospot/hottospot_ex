@@ -69,7 +69,7 @@ function MapPage() {
         console.log('NorthEast.lat:', northEast.lat)
         console.log('NorthEast.lng:', northEast.lng)
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
         )
         console.log('data', data)
         setArrDistance(data)
@@ -116,7 +116,7 @@ function MapPage() {
         //console.log('zoom', zoomLevel)
 
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=1`,
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
         )
         setArrDistance([])
         setArrDistance((prev) => [

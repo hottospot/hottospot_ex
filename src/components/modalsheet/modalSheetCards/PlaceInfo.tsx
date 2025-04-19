@@ -12,15 +12,14 @@ function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
   const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
-  const [expanded,setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
 
-  const arr = position.tags ? JSON.parse(position.tags):undefined ;
+  const arr = position.tags ? JSON.parse(position.tags) : undefined
 
-  console.log("arr",arr)
-  
+  console.log('arr', arr)
 
   //const jsonTitle = JSON.stringify(position.tags)
 
@@ -51,25 +50,31 @@ function PlaceInfo() {
 
   console.log('modalWindowIsOpen', modalWindowIsOpen)
 
-  const hashtagArr = arr.map((data:string) => `#${data}`)
+  // const hashtagArr = arr.map((data:string) => `#${data}`)
 
-  const isLong         = hashtagArr.length >= 15;
-  const displayText = expanded || !isLong ? hashtagArr.length : hashtagArr.length.slice(0, 22) + "…";
+  // const isLong         = hashtagArr.length >= 15;
+  // const displayText = expanded || !isLong ? hashtagArr.length : hashtagArr.length.slice(0, 22) + "…";
 
- 
+  const tiktokTitle = position.tiktokTitle ?? ''
+
+  console.log('tiktokTitle', tiktokTitle.length)
+
+  const isDetailsLong = tiktokTitle.length > 150
+
+  console.log('expanded', expanded)
+
+  const displayDetails = isDetailsLong && !expanded ? tiktokTitle.slice(0, 150) + '…' : tiktokTitle
+
+  // if(expanded){
+
+  // }
 
   return (
     <div className={styles.container}>
       <div className={styles.whole}>
         <div className={styles.header}>
           <div className={styles.title}>
-
-            {  position.place?.includes('不明') ? <div>{hashtagArr}</div> : <div>{displayText}</div>}
-            {
-              isLong && position.place?.includes('不明') && !expanded && (
-                <button onClick={() => setExpanded(true)}>詳しく見る</button>
-              )
-            }
+            {position.place?.includes('不明') ? <div>ー</div> : <div>{position.place}</div>}
           </div>
 
           <div className={styles.buttons}>
@@ -85,15 +90,13 @@ function PlaceInfo() {
             </div>
           </div>
         </div>
-        <div className={styles.subtitle}>{position.tiktokTitle}</div>
-        
+        <div className={styles.subtitle}>{displayDetails}</div>
+        {isDetailsLong && <div onClick={() => setExpanded(!expanded)}>詳しく見る</div>}
       </div>
 
       <div className={styles.middle}>
         <div className={styles.middleLeft}>
-
-            <img className={styles.img} src={position.photoName ?? undefined}/>
-
+          <img className={styles.img} src={position.photoName ?? undefined} />
         </div>
         <div className={styles.middleRight}>
           <div className={styles.targetTitle}>目的地まで</div>
@@ -122,7 +125,13 @@ function PlaceInfo() {
 
           <div className={styles.minutes}>30分</div>
 
-          <div className={styles.url}>参考元リンク</div>
+          {position.url ? (
+            <a className={styles.url} href={position.url}>
+              参考元
+            </a>
+          ) : (
+            <div>ー</div>
+          )}
         </div>
       </div>
     </div>
