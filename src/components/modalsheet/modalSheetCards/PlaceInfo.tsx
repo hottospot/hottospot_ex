@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
 import { useAtom } from 'jotai'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { locationPositionAtom } from '../../../atoms/locationPositionAtom'
 import GradationIconButton from '../../../layout/GradationIconButton'
@@ -15,14 +15,21 @@ function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
   const [nowposition] = useAtom(nowPositionAtom)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
-  const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
+  const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | 'bicycling'>('walk')
   const [duration, setDuration] = useState<{hour:string, mins:string}>();
+  const [distance, setDistance] = useState();
   const modes = ['driving', 'walking', 'bicycling', 'transit']
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
 
   const apiUrl = import.meta.env.VITE_API_KEY
+
+  useEffect(() => {
+    if (modalWindowIsOpen) {
+      handleWalk()
+    }
+  }, [modalWindowIsOpen])
 
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
@@ -39,18 +46,31 @@ function PlaceInfo() {
     console.log('徒歩ボタンが押されました。')
     console.log("nowposition", nowposition);
     setSelectedTransport('walk');
-    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[1]}`;
+
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[2]}`;
     const res = await GetMethod(RootUrl);
     console.log("res", JSON.stringify(res));
-    console.log("walkminuts", res.routes.duration);
+    console.log("walkminuts", res.routes.distance);
     setDuration(res.routes.duration);
-    
-    
+    setDistance(res.routes.distance);
   }
+
+  const handleBicycling = async () => {
+    console.log('自転車ボタンが押されました。')
+    setSelectedTransport('bicycling');
+
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("carminuts", res.routes.duration);
+    setDuration(res.routes.duration);
+  }
+
 
   const handleCar = async () => {
     console.log('車ボタンが押されました。')
     setSelectedTransport('car');
+
     const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
     const res = await GetMethod(RootUrl);
     console.log("res", JSON.stringify(res));
@@ -61,6 +81,7 @@ function PlaceInfo() {
   const handleTrain = async () => {
     console.log('電車ボタンが押されました。')
     setSelectedTransport('train');
+
     const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
     const res = await GetMethod(RootUrl);
     console.log("res", JSON.stringify(res));
@@ -72,6 +93,7 @@ function PlaceInfo() {
   console.log("modalWindowIsOpen", modalWindowIsOpen);
   console.log("duration", duration);
   console.log("duration[0]", duration?.hour);
+  console.log("distance", distance)
 
   return (
     <div className={styles.container}>
@@ -105,13 +127,18 @@ function PlaceInfo() {
         </div>
         <div className={styles.middleRight}>
           <div className={styles.targetTitle}>目的地まで</div>
-          <div className={styles.limit}>10km</div>
+          <div className={styles.limit}>{distance}</div>
           <div className={styles.predict}>予想時間</div>
 
           <div className={styles.waysButton}>
             <div className={styles.walk}>
               <GradationIconButton color={selectedTransport ==="walk" ? "red" : "gray"} onClick={handleWalk}>
                 <Icon icon="material-symbols:directions-walk-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
+              </GradationIconButton>
+            </div>
+            <div className={styles.bicycling}>
+              <GradationIconButton color={selectedTransport ==="bicycling" ? "red" : "gray"} onClick={handleBicycling}>
+                <Icon icon="mdi:bicycle" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.car}>
@@ -134,7 +161,7 @@ function PlaceInfo() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default PlaceInfo
+export default PlaceInfo;
