@@ -9,7 +9,7 @@ import greenicon from '../../public/img/greenIcon.png'
 import redicon from '../../public/img/redIcon.png'
 import { locationPositionAtom } from '../atoms/locationPositionAtom'
 interface PinLocateProps {
-  setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>
+  setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>;
   arrDistance: {
     explanation: string
     latitude: number
@@ -143,7 +143,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
         />
       ))}
     </div>
-  )
+  );
 }
 
-export default PinLocate
+export default PinLocate;

@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
 import { useAtom } from 'jotai'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { locationPositionAtom } from '../../../atoms/locationPositionAtom'
 import GradationIconButton from '../../../layout/GradationIconButton'
@@ -8,14 +8,29 @@ import GradationIconButton from '../../../layout/GradationIconButton'
 import styles from './PlaceInfo.module.scss'
 import { modalWindowAtom } from '../../../atoms/modalWindowAtom'
 
+import { GetMethod } from '../../ResponseMethod'
+import { nowPositionAtom } from '../../../atoms/nowPositionAtom'
+
 function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom) //押した場所の情報
+  const [nowposition] = useAtom(nowPositionAtom)
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom)
-  const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | null>(null)
+  const [selectedTransport, setSelectedTransport] = useState<'walk' | 'car' | 'train' | 'bicycling'>('walk')
+  const [duration, setDuration] = useState<{hour:string, mins:string}>();
+  const [distance, setDistance] = useState();
+  const modes = ['driving', 'walking', 'bicycling', 'transit']
   const [expanded, setExpanded] = useState(false)
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
+
+  const apiUrl = import.meta.env.VITE_API_KEY
+
+  useEffect(() => {
+    if (modalWindowIsOpen) {
+      handleWalk()
+    }
+  }, [modalWindowIsOpen])
 
   const arr = position.tags ? JSON.parse(position.tags) : undefined
 
@@ -25,6 +40,8 @@ function PlaceInfo() {
 
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
+    const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
+    window.open(shareUrl);
   }
 
   const handleClose = () => {
@@ -32,19 +49,51 @@ function PlaceInfo() {
     setModalWindowIsOpen(false)
   }
 
-  const handleWalk = () => {
+  const handleWalk = async () => {
     console.log('徒歩ボタンが押されました。')
-    setSelectedTransport('walk')
+    console.log("nowposition", nowposition);
+    setSelectedTransport('walk');
+
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[2]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("walkminuts", res.routes.distance);
+    setDuration(res.routes.duration);
+    setDistance(res.routes.distance);
   }
 
-  const handleCar = () => {
+  const handleBicycling = async () => {
+    console.log('自転車ボタンが押されました。')
+    setSelectedTransport('bicycling');
+
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("carminuts", res.routes.duration);
+    setDuration(res.routes.duration);
+  }
+
+
+  const handleCar = async () => {
     console.log('車ボタンが押されました。')
-    setSelectedTransport('car')
+    setSelectedTransport('car');
+
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("carminuts", res.routes.duration);
+    setDuration(res.routes.duration);
   }
 
-  const handleTrain = () => {
+  const handleTrain = async () => {
     console.log('電車ボタンが押されました。')
-    setSelectedTransport('train')
+    setSelectedTransport('train');
+
+    const RootUrl =  `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
+    const res = await GetMethod(RootUrl);
+    console.log("res", JSON.stringify(res));
+    console.log("trainminuts", res.routes.duration);
+    setDuration(res.routes.duration);
   }
   console.log('position', position)
 
@@ -100,13 +149,18 @@ function PlaceInfo() {
         </div>
         <div className={styles.middleRight}>
           <div className={styles.targetTitle}>目的地まで</div>
-          <div className={styles.limit}>10km</div>
+          <div className={styles.limit}>{distance}</div>
           <div className={styles.predict}>予想時間</div>
 
           <div className={styles.waysButton}>
             <div className={styles.walk}>
               <GradationIconButton color={selectedTransport === 'walk' ? 'red' : 'gray'} onClick={handleWalk}>
                 <Icon icon="material-symbols:directions-walk-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
+              </GradationIconButton>
+            </div>
+            <div className={styles.bicycling}>
+              <GradationIconButton color={selectedTransport ==="bicycling" ? "red" : "gray"} onClick={handleBicycling}>
+                <Icon icon="mdi:bicycle" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.car}>
@@ -121,9 +175,9 @@ function PlaceInfo() {
             </div>
           </div>
 
-          <div className={styles.hour}>231時間</div>
+          <div className={styles.hour}>{duration?.hour}</div>
 
-          <div className={styles.minutes}>30分</div>
+          <div className={styles.minutes}>{duration?.mins || "ー"}</div>
 
           {position.url ? (
             <a className={styles.url} href={position.url}>
@@ -135,7 +189,7 @@ function PlaceInfo() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default PlaceInfo
+export default PlaceInfo;
