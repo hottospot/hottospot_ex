@@ -72,14 +72,14 @@ function MapPage() {
         console.log("NorthEast.lat:", northEast.lat);
         console.log("NorthEast.lng:", northEast.lng);
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`
-        );
-        console.log("data", data);
-        setArrDistance(data);
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=2`,
+        )
+        console.log('data', data)
+        setArrDistance(data)
 
-        console.log("initializedRef.curren", initializedRef.current);
-      };
-      fetchData();
+        console.log('initializedRef.curren', initializedRef.current)
+      }
+      fetchData()
     }, []);
 
     return null;
@@ -100,11 +100,17 @@ function MapPage() {
 
     let sendZoom = 0;
 
-    if (zoomLevel < 8 && zoomLevel > 7) {
-      sendZoom = 3;
+    if ( zoomLevel < 8) {
+      sendZoom = 3
+    }
+    if(zoomLevel >= 8 && zoomLevel < 12){
+      sendZoom = 2
     }
 
-    console.log("sendZoom", sendZoom);
+    if(zoomLevel >= 12 ){
+      sendZoom = 1
+    }
+    console.log('sendZoom', sendZoom)
     const map = useMapEvents({
       //leafletのイベントハンドラを使うことができる
       moveend: async () => {
@@ -126,8 +132,8 @@ function MapPage() {
         console.log("NorthEast.lng:", northEast.lng);
 
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`
-        );
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=${sendZoom}`,
+        )
 
         setArrDistance([]);
         setArrDistance((prev) => [
