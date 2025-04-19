@@ -35,7 +35,7 @@ function MapPage() {
   const correntposition = location.state.correntposition;
   console.log(correntposition);
   const setMapBounds = useSetAtom(MapBoundsAtom);
-  const [sendZoom,setSendZoom] = useAtom(sendZoomAtom);
+  const [sendZoom, setSendZoom] = useAtom(sendZoomAtom);
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
@@ -61,7 +61,7 @@ function MapPage() {
       photoName: "",
       title: "",
       place: "",
-      scale:0
+      scale: 0,
     },
   ]);
 
@@ -165,7 +165,7 @@ function MapPage() {
               title: string;
               photoName: string;
               place: string;
-              scale:number;
+              scale: number;
             }) => ({
               explanation: d.explanation,
               latitude: d.latitude,
@@ -178,7 +178,7 @@ function MapPage() {
               title: d.title,
               photoName: d.photoName,
               place: d.place,
-              scale:d.scale
+              scale: d.scale,
             })
           ),
         ]);
@@ -220,12 +220,11 @@ function MapPage() {
           <SetViewOnClick />
           <Marker position={arrCenter} />
 
-            <PinLocate
-              setModalWindowIsOpen={setModalWindowIsOpen}
-              arrDistance={arrDistance}
-
-              correntposition={correntposition}
-            />
+          <PinLocate
+            setModalWindowIsOpen={setModalWindowIsOpen}
+            arrDistance={arrDistance}
+            correntposition={correntposition}
+          />
         </MapContainer>
       </div>
       <div className={style.form}>
