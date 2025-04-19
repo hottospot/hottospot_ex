@@ -19,9 +19,9 @@ interface PinLocateProps {
     tiktokTitle: string
     url: string
     userName: string
-    title:string
-    photoName:string
-    place:string
+    title: string
+    photoName: string
+    place: string
   }[]
   correntposition: {
     latitude: number
@@ -47,12 +47,12 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
     tags: string
     userName: string
     url: string
-    title:string
-    latitude:number
-    longitude:number
-    likes:number
-    photoName:string
-    place:string
+    title: string
+    latitude: number
+    longitude: number
+    likes: number
+    photoName: string
+    place: string
   }) => {
     setModalWindowIsOpen(true)
     setPosition({
@@ -61,12 +61,12 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
       tiktokTitle: place.tiktokTitle,
       userName: place.userName,
       url: place.url,
-      title:place.title,
-      likes:place.likes,
-      photoName:place.photoName,
-      place:place.place,
-      latitude:place.latitude,
-      longitude:place.longitude
+      title: place.title,
+      likes: place.likes,
+      photoName: place.photoName,
+      place: place.place,
+      latitude: place.latitude,
+      longitude: place.longitude,
     })
 
     // クリック時に地図を拡大
@@ -106,20 +106,17 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
 
   function Icon(location: { likes: number }) {
     const showIcon =
-      location.likes < 50
-        ? { icon: blueicon, zoomlevel: 11 }
-        : location.likes >= 50 && location.likes < 100
-          ? { icon: greenicon, zoomlevel: 9 }
-          : location.likes >= 100 && location.likes < 200
-            ? { icon: redicon, zoomlevel: 7 }
-            : { icon: fireicon, zoomlevel: 0 }
+      location.likes < 10000
+        ?  blueicon 
+        : location.likes >= 10000 && location.likes < 100000
+          ? greenicon
+          : fireicon
 
-    if (zoomLevel >= showIcon.zoomlevel) {
-      return L.divIcon({
-        className: 'custom-marker',
-        html: `
+    return L.divIcon({
+      className: 'custom-marker',
+      html: `
               <div style="position: relative; text-align: center;">
-                <img src=${showIcon.icon} style="width: 50px; height: 50px;" />
+                <img src=${showIcon} style="width: 50px; height: 50px;" />
                 <div style="
                 transform: translateY(-210%);
                 color:white;
@@ -129,17 +126,9 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
                 </div>
               </div>
               `,
-        iconSize: [50, 50],
-        iconAnchor: [25, 25],
-      })
-    } else {
-      return L.divIcon({
-        className: 'custom-marker',
-        html: ``,
-        iconSize: [50, 50],
-        iconAnchor: [25, 25],
-      })
-    }
+      iconSize: [50, 50],
+      iconAnchor: [25, 25],
+    })
   }
 
   return (
