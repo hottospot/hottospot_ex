@@ -94,6 +94,7 @@ function PlaceInfo() {
   console.log("duration", duration);
   console.log("duration[0]", duration?.hour);
   console.log("distance", distance)
+  console.log("URL", position.url);
 
   return (
     <div className={styles.container}>
@@ -157,7 +158,10 @@ function PlaceInfo() {
 
           <div className={styles.minutes}>{duration?.mins || "ー"}</div>
 
-          <div className={styles.url}>参考元リンク</div>
+          {/* <div className={styles.url}>参考元リンク</div> */}
+          <a href={position.url!} target="_blank" rel="noopener noreferrer" className={styles.url}>
+  参照元リンク
+</a>
         </div>
       </div>
     </div>
