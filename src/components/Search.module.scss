@@ -24,6 +24,9 @@ $horizonPadding: 20px;
     width: 100%;
     .placeholder {
       color: #a7b9c7;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       .selectedTags {
         display: flex;
         gap: 8px;
