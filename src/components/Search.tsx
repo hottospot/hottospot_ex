@@ -17,7 +17,7 @@ export const Search = () => {
   const [phase, setPhase] = useState<"adjective" | "place">("adjective");
   const [selectedAdjective, setSelectedAdjective] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [ref, { height }] = useMeasure();
+  const [_, { height }] = useMeasure();
 
   const setArrDistance = useSetAtom(arrDistanceAtom);
   const setMapBounds = useAtomValue(MapBoundsAtom);
