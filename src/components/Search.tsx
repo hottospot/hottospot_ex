@@ -25,25 +25,32 @@ export const Search = () => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const placeList = ["カフェ", "絶景", "公園", "本屋", "美術館", "スイーツ", "レストラン"];
-  const adjectiveList = ["おしゃれ", "かわいい", "スタイリッシュ", "映えてる", "かっこいい"];
+  const adjectiveList = ["おしゃれ", "かわいい", "映えてる", "かっこいい", "デート", "絶景", "食べ歩き", "アウトドア"];
 
   const adjectiveColors: Record<string, "blue" | "green" | "red" | "orange" | "purple"> = {
     おしゃれ: "green",
     かわいい: "orange",
-    スタイリッシュ: "purple",
     映えてる: "blue",
-    かっこいい: "red",
+    かっこいい: "purple",
+    デート: "red",
+    絶景: "blue",
+    食べ歩き: "red",
+    アウトドア: "green",
   };
+
+  const placeList = ["カフェ", "公園", "スイーツ", "レストラン", "旅行", "グルメ", "韓国", "ドライブ", "風景", "夜景"];
 
   const placeColors: Record<string, "blue" | "green" | "red" | "orange" | "purple"> = {
     カフェ: "red",
-    絶景: "green",
     公園: "orange",
-    本屋: "purple",
-    美術館: "blue",
     スイーツ: "purple",
     レストラン: "green",
+    旅行: "green",
+    グルメ: "orange",
+    韓国: "blue",
+    ドライブ: "green",
+    風景: "blue",
+    夜景: "purple",
   };
 
   const request = async () => {
@@ -101,7 +108,7 @@ export const Search = () => {
       ref={containerRef}
       className={`${styles.container} ${isOpen && styles.openContainer}`}
       animate={{
-        height: isOpen ? "180px" : `calc(${height}px + 24px)`,
+        height: isOpen ? "220px" : `calc(${height}px + 24px)`,
       }}
       initial={false}
       transition={{ duration: 0.16 }}
@@ -168,7 +175,7 @@ export const Search = () => {
                 transition={{ ease: "easeOut" }}
               >
                 <div className={styles.optionGroupHeader}>
-                  <div className={styles.optionGroupTitle}>形容詞</div>
+                  <div className={styles.optionGroupTitle}>今の気分は？</div>
                   <SkipButton
                     onClick={() => {
                       setPhase("place");
@@ -204,7 +211,7 @@ export const Search = () => {
                 transition={{ duration: 0.24, ease: "easeOut" }}
               >
                 <div className={styles.optionGroupHeader}>
-                  <div className={styles.optionGroupTitle}>場所</div>
+                  <div className={styles.optionGroupTitle}>どこ行く？</div>
                   <SkipButton onClick={() => setIsOpen(false)} />
                 </div>
                 <div className={styles.dividerLine} />
