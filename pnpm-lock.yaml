@@ -47,6 +47,9 @@ importers:
       react-use-measure:
         specifier: ^2.1.7
         version: 2.1.7(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
+      workbox-window:
+        specifier: ^7.3.0
+        version: 7.3.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.24.0
@@ -101,10 +104,10 @@ importers:
         version: 8.29.1(eslint@9.24.0)(typescript@5.7.3)
       vite:
         specifier: ^6.2.0
-        version: 6.2.5(@types/node@22.14.0)(sass-embedded@1.86.3)(terser@5.39.0)
+        version: 6.2.5(@types/node@22.14.1)(sass-embedded@1.86.3)(terser@5.39.0)
       vite-plugin-pwa:
         specifier: ^1.0.0
-        version: 1.0.0(vite@6.2.5(@types/node@22.14.0)(sass-embedded@1.86.3)(terser@5.39.0))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
+        version: 1.0.0(vite@6.2.5(@types/node@22.14.1)(sass-embedded@1.86.3)(terser@5.39.0))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
 
 packages:
 
@@ -9146,20 +9149,18 @@ snapshots:
 
   varint@6.0.0: {}
 
-
-  vite-plugin-pwa@1.0.0(vite@6.2.5(@types/node@22.14.0)(sass-embedded@1.86.3)(terser@5.39.0))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0):
+  vite-plugin-pwa@1.0.0(vite@6.2.5(@types/node@22.14.1)(sass-embedded@1.86.3)(terser@5.39.0))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0):
     dependencies:
       debug: 4.4.0
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.12
-      vite: 6.2.5(@types/node@22.14.0)(sass-embedded@1.86.3)(terser@5.39.0)
+      vite: 6.2.5(@types/node@22.14.1)(sass-embedded@1.86.3)(terser@5.39.0)
       workbox-build: 7.3.0(@types/babel__core@7.20.5)
       workbox-window: 7.3.0
     transitivePeerDependencies:
       - supports-color
 
-  vite@6.2.5(@types/node@22.14.0)(sass-embedded@1.86.3)(terser@5.39.0):
-
+  vite@6.2.5(@types/node@22.14.1)(sass-embedded@1.86.3)(terser@5.39.0):
     dependencies:
       esbuild: 0.25.2
       postcss: 8.5.3

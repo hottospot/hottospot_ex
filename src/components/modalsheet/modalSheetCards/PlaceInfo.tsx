@@ -19,6 +19,7 @@ function PlaceInfo() {
   const [duration, setDuration] = useState<{hour:string, mins:string}>();
   const [distance, setDistance] = useState();
   const modes = ['driving', 'walking', 'bicycling', 'transit']
+  const [expanded, setExpanded] = useState(false)
 
   console.log('position', position)
   console.log('"position.name', position.tiktokTitle)
@@ -31,6 +32,12 @@ function PlaceInfo() {
     }
   }, [modalWindowIsOpen])
 
+  const arr = position.tags ? JSON.parse(position.tags) : undefined
+
+  console.log('arr', arr)
+
+  //const jsonTitle = JSON.stringify(position.tags)
+
   const handleShare = () => {
     console.log('シェアボタンが押されました。')
     const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
@@ -39,7 +46,7 @@ function PlaceInfo() {
 
   const handleClose = () => {
     console.log('閉じるボタンが押されました。')
-      setModalWindowIsOpen(false);
+    setModalWindowIsOpen(false)
   }
 
   const handleWalk = async () => {
@@ -90,20 +97,36 @@ function PlaceInfo() {
   }
   console.log('position', position)
 
-  console.log("modalWindowIsOpen", modalWindowIsOpen);
-  console.log("duration", duration);
-  console.log("duration[0]", duration?.hour);
-  console.log("distance", distance)
-  console.log("URL", position.url);
+
+
+  console.log('modalWindowIsOpen', modalWindowIsOpen)
+
+  // const hashtagArr = arr.map((data:string) => `#${data}`)
+
+  // const isLong         = hashtagArr.length >= 15;
+  // const displayText = expanded || !isLong ? hashtagArr.length : hashtagArr.length.slice(0, 22) + "…";
+
+  const tiktokTitle = position.tiktokTitle ?? ''
+
+  console.log('tiktokTitle', tiktokTitle.length)
+
+  const isDetailsLong = tiktokTitle.length > 150
+
+  console.log('expanded', expanded)
+
+  const displayDetails = isDetailsLong && !expanded ? tiktokTitle.slice(0, 150) + '…' : tiktokTitle
+
+  // if(expanded){
+
+  // }
 
   return (
     <div className={styles.container}>
       <div className={styles.whole}>
         <div className={styles.header}>
-          
-          <div className={styles.title}>{
-            position.place == "不明" ? (<div>{position.tags}</div>):(<div>{position.place}</div>)
-          }</div>
+          <div className={styles.title}>
+            {position.place?.includes('不明') ? <div>ー</div> : <div>{position.place}</div>}
+          </div>
 
           <div className={styles.buttons}>
             <div className={styles.share}>
@@ -118,13 +141,13 @@ function PlaceInfo() {
             </div>
           </div>
         </div>
-        <div className={styles.subtitle}>検索した場所の詳細</div>
-        <div>{position.tiktokTitle}</div>
+        <div className={styles.subtitle}>{displayDetails}</div>
+        {isDetailsLong && <div onClick={() => setExpanded(!expanded)}>詳しく見る</div>}
       </div>
 
       <div className={styles.middle}>
         <div className={styles.middleLeft}>
-          <div className={styles.img}>画像</div>
+          <img className={styles.img} src={position.photoName ?? undefined} />
         </div>
         <div className={styles.middleRight}>
           <div className={styles.targetTitle}>目的地まで</div>
@@ -133,7 +156,7 @@ function PlaceInfo() {
 
           <div className={styles.waysButton}>
             <div className={styles.walk}>
-              <GradationIconButton color={selectedTransport ==="walk" ? "red" : "gray"} onClick={handleWalk}>
+              <GradationIconButton color={selectedTransport === 'walk' ? 'red' : 'gray'} onClick={handleWalk}>
                 <Icon icon="material-symbols:directions-walk-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
@@ -143,12 +166,12 @@ function PlaceInfo() {
               </GradationIconButton>
             </div>
             <div className={styles.car}>
-              <GradationIconButton color={selectedTransport ==='car' ? "red" : "gray"} onClick={handleCar}>
+              <GradationIconButton color={selectedTransport === 'car' ? 'red' : 'gray'} onClick={handleCar}>
                 <Icon icon="ic:outline-directions-car" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
             <div className={styles.train}>
-              <GradationIconButton color={selectedTransport ==='train' ? "red" : "gray"} onClick={handleTrain}>
+              <GradationIconButton color={selectedTransport === 'train' ? 'red' : 'gray'} onClick={handleTrain}>
                 <Icon icon="material-symbols:train-outline-rounded" style={{ fontSize: '15px', color: '#ffffff' }} />
               </GradationIconButton>
             </div>
@@ -158,10 +181,14 @@ function PlaceInfo() {
 
           <div className={styles.minutes}>{duration?.mins || "ー"}</div>
 
-          {/* <div className={styles.url}>参考元リンク</div> */}
-          <a href={position.url!} target="_blank" rel="noopener noreferrer" className={styles.url}>
-  参照元リンク
-</a>
+
+          {position.url ? (
+            <a className={styles.url} href={position.url}>
+              参考元
+            </a>
+          ) : (
+            <div>ー</div>
+          )}
         </div>
       </div>
     </div>
