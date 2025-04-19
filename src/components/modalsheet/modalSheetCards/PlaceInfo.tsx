@@ -134,7 +134,7 @@ function PlaceInfo() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default PlaceInfo
+export default PlaceInfo;

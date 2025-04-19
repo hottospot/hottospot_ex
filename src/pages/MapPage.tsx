@@ -1,27 +1,30 @@
-import { useEffect, useRef, useState } from 'react'
-import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import { useAtom, useSetAtom } from 'jotai'
-import { LatLng } from 'leaflet'
+import "leaflet/dist/leaflet.css";
+import * as turf from "@turf/turf";
+import { useAtom, useSetAtom } from "jotai";
+import { LatLng } from "leaflet";
+import { useEffect, useRef, useState } from "react";
+import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 
-import { modalWindowAtom } from '../atoms/modalWindowAtom'
-import ModalSheet from '../components/modalsheet/ModalSheet'
+import { MapBoundsAtom } from "../atoms/locationPositionAtom";
+import { modalWindowAtom } from "../atoms/modalWindowAtom";
+import PinLocate from "../components/PinLocate";
+import { Search } from "../components/Search";
+import ModalSheet from "../components/modalsheet/ModalSheet";
 
 import style from './MapPage.module.scss'
-import PinLocate from '../components/PinLocate'
 import { GetMethod } from '../components/ResponseMethod'
 import { useLocation } from 'react-router-dom'
 
 import { nowPositionAtom } from '../atoms/nowPositionAtom'
 
 function SetViewOnClick() {
-  const map = useMapEvent('click', (e) => {
+  const map = useMapEvent("click", (e) => {
     map.setView(e.latlng, map.getZoom(), {
       animate: true,
-    })
-  })
+    });
+  });
 
-  return null
+  return null;
 }
 
 function MapPage() {
@@ -30,8 +33,9 @@ function MapPage() {
   const location = useLocation()
   const correntposition = location.state.correntposition
   console.log(correntposition)
+  const setMapBounds = useSetAtom(MapBoundsAtom);
 
-  const center = new LatLng(correntposition.latitude, correntposition.longitude) //座標オブジェクトLatLng
+  const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
   console.log('center', center)
 
@@ -66,13 +70,19 @@ function MapPage() {
       if (initializedRef.current) return
       initializedRef.current = true
       const fetchData = async () => {
-        const bounds = mapFirst.getBounds()
-        const southWest = bounds.getSouthWest() // 左下
-        const northEast = bounds.getNorthEast() // 右上
-        console.log('SouthWest.lat:', southWest.lat)
-        console.log('SouthWest.lng:', southWest.lng) // 緯度・経度
-        console.log('NorthEast.lat:', northEast.lat)
-        console.log('NorthEast.lng:', northEast.lng)
+        const bounds = mapFirst.getBounds();
+        const southWest = bounds.getSouthWest(); // 左下
+        const northEast = bounds.getNorthEast(); // 右上
+        setMapBounds({
+        northEastLat: northEast.lat,
+        southWestLat: southWest.lat,
+        northEastLng: northEast.lng,
+        southWestLng: southWest.lng,
+      });
+      console.log("SouthWest.lat:", southWest.lat);
+        console.log("SouthWest.lng:", southWest.lng); // 緯度・経度
+        console.log("NorthEast.lat:", northEast.lat);
+        console.log("NorthEast.lng:", northEast.lng);
         const data = await GetMethod(
           `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
         )
@@ -82,12 +92,10 @@ function MapPage() {
         console.log('initializedRef.curren', initializedRef.current)
       }
       fetchData()
-    }, [])
+    }, []);
 
-    return null
-  }
-
-  //console.log('bounds', bounds)
+    return null;
+  };
 
   const MapBoundsLogger = () => {
     const mapzoom = useMap()
@@ -111,16 +119,26 @@ function MapPage() {
     console.log('sendZoom', sendZoom)
     const map = useMapEvents({
       //leafletのイベントハンドラを使うことができる
-      moveend: async () => {
+      moveend: async() => {
         const bounds = map.getBounds()
         const southWest = bounds.getSouthWest() // 左下
         const northEast = bounds.getNorthEast() // 右上
 
-        //console.log('zoom', zoomLevel)
+        setMapBounds({
+          northEastLat: northEast.lat,
+          southWestLat: southWest.lat,
+          northEastLng: northEast.lng,
+          southWestLng: southWest.lng,
+        });
+        console.log('SouthWest.lat:', southWest.lat)
+        console.log('SouthWest.lng:', southWest.lng) 
+        console.log('NorthEast.lat:', northEast.lat)
+        console.log('NorthEast.lng:', northEast.lng)
 
         const data = await GetMethod(
           `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`,
         )
+
         setArrDistance([])
         setArrDistance((prev) => [
           ...prev,
@@ -153,21 +171,55 @@ function MapPage() {
           ),
         ])
       },
-    })
+    });
 
-    return null
+    return null;
+  };
+
+  //距離の計算
+  const R = Math.PI / 180;
+  function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
+    lat1 *= R;
+    lng1 *= R;
+    lat2 *= R;
+    lng2 *= R;
+    return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
   }
+
+  arrDistance.map((d) => {
+    //console.log("d.position",d.position)
+    //現在の経度緯度、目的地の経度緯度
+    console.log(
+      "distance",
+      distance(correntposition.latitude, correntposition.longitude, d.latitude, d.longitude)
+    );
+  });
+
+  // console.log(`arrDistanceの距離${arrDistance}`);
+
+  const from = turf.point([correntposition.longitude, correntposition.latitude]);
+  const to = turf.point([139.74543043734087, 35.65862055760233]);
+  const d = turf.distance(from, to, { units: "kilometers" });
+
+  console.log(`${d} km`);
 
   return (
     <>
-      {modalWindowIsOpen && <div className={style.modalOverlay} onClick={() => setModalWindowIsOpen(false)} />}
-      <div style={{ zIndex: '10', position: 'absolute' }}>
+      <div className={style.gradationBackground} />
+      <Search />
+      {modalWindowIsOpen && (
+        <div
+          className={style.modalOverlay}
+          onClick={() => setModalWindowIsOpen(false)}
+        />
+      )}
+      <div style={{ zIndex: "10", position: "absolute" }}>
         <MapContainer
           center={arrCenter}
           zoom={11}
           scrollWheelZoom={false}
           // zoomControl={false} //ズームバー（開発時のみ)
-          style={{ height: '100vh', width: '100vw' }}
+          style={{ height: "100vh", width: "100vw" }}
           key={`${correntposition.latitude}-${correntposition.longitude}`} // ←座標が変わると再描画
         >
           <TileLayer
@@ -195,7 +247,7 @@ function MapPage() {
         <ModalSheet />
       </div>
     </>
-  )
+  );
 }
 
-export default MapPage
+export default MapPage;

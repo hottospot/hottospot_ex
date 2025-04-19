@@ -1,4 +1,4 @@
-.modalOverlay{
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -7,19 +7,28 @@
   z-index: 40;
 }
 
-.MapPage{
-    text-align: center;
+.MapPage {
+  text-align: center;
   height: 100vh;
 }
 
 .leaflet-container {
-    width: 100vw;
-    height: 100vh;
-  }
+  width: 100vw;
+  height: 100vh;
+}
 
-  .form {
-    position: relative;
-    display: flex;
-    z-index: 50;
-    width: 100%;
-  }
+.form {
+  position: relative;
+  display: flex;
+  z-index: 50;
+  width: 100%;
+}
+
+.gradationBackground {
+  position: absolute;
+  height: 200px;
+  width: 100vw;
+  z-index: 99;
+  top: -40px;
+  background: linear-gradient(0deg, rgba(217, 217, 217, 0) 7.8%, #f74f85 73.9%);
+}
