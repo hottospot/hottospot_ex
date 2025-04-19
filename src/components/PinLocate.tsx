@@ -1,59 +1,64 @@
-import { SetStateAction, useAtom } from 'jotai'
-import L from 'leaflet'
-import React, { useState } from 'react'
-import { Marker, useMap, useMapEvents } from 'react-leaflet'
+import { SetStateAction, useAtom } from "jotai";
+import L from "leaflet";
+import React, { useState } from "react";
+import { Marker, useMap, useMapEvents } from "react-leaflet";
 
-import blueicon from '../../public/img/blueIcon.png'
-import fireicon from '../../public/img/fireIcon.png'
-import greenicon from '../../public/img/greenIcon.png'
-import { locationPositionAtom } from '../atoms/locationPositionAtom'
+import blueicon from "../../public/img/blueIcon.png";
+import fireicon from "../../public/img/fireIcon.png";
+import greenicon from "../../public/img/greenIcon.png";
+import redIcon from "../../public/img/redIcon.png";
+import { locationPositionAtom } from "../atoms/locationPositionAtom";
+import { sendZoomAtom } from "../atoms/sendZoomAtom";
 interface PinLocateProps {
   setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>;
   arrDistance: {
-    explanation: string
-    latitude: number
-    likes: number
-    longitude: number
-    tags: string
-    tiktokTitle: string
-    url: string
-    userName: string
-    title: string
-    photoName: string
-    place: string
-  }[]
+    explanation: string;
+    latitude: number;
+    likes: number;
+    longitude: number;
+    tags: string;
+    tiktokTitle: string;
+    url: string;
+    userName: string;
+    title: string;
+    photoName: string;
+    place: string;
+    scale:number;
+  }[];
   correntposition: {
-    latitude: number
-    longitude: number
-  }
+    latitude: number;
+    longitude: number;
+  };
 }
 
 function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLocateProps) {
-  const map = useMap()
-  const [, setZoomLevel] = useState(map.getZoom())
+  const map = useMap();
+  const [, setZoomLevel] = useState(map.getZoom());
 
-  const [__, setPosition] = useAtom(locationPositionAtom) //選択した場所の情報
+  const [__, setPosition] = useAtom(locationPositionAtom); //選択した場所の情報
+  const [sendZoom, setSendZoom] = useAtom(sendZoomAtom);
 
   useMapEvents({
     zoomend: () => {
-      setZoomLevel(map.getZoom())
+      setZoomLevel(map.getZoom());
     },
-  })
+  });
 
   const handleOpen = (place: {
-    tiktokTitle: string
-    explanation: string
-    tags: string
-    userName: string
-    url: string
-    title: string
-    latitude: number
-    longitude: number
-    likes: number
-    photoName: string
-    place: string
+    tiktokTitle: string;
+    explanation: string;
+    tags: string;
+    userName: string;
+    url: string;
+    title: string;
+    latitude: number;
+    longitude: number;
+    likes: number;
+    photoName: string;
+    place: string;
+    scale:number;
   }) => {
-    setModalWindowIsOpen(true)
+    setModalWindowIsOpen(true);
     setPosition({
       explanation: place.explanation,
       tags: place.tags,
@@ -66,53 +71,60 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
       place: place.place,
       latitude: place.latitude,
       longitude: place.longitude,
-    })
+      scale:place.scale
+    });
+
+    setSendZoom(2);
 
     // クリック時に地図を拡大
-    map.setView([place.latitude, place.longitude], 13, {
+    map.setView([place.latitude, place.longitude], 15, {
       animate: true,
-    })
+    });
 
-    const R = Math.PI / 180
+    const R = Math.PI / 180;
     function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
-      lat1 *= R
-      lng1 *= R
-      lat2 *= R
-      lng2 *= R
-      return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2))
+      lat1 *= R;
+      lng1 *= R;
+      lat2 *= R;
+      lng2 *= R;
+      return (
+        6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2))
+      );
     }
 
-    const road = distance(correntposition.latitude, correntposition.longitude, place.latitude, place.longitude)
+    const road = distance(correntposition.latitude, correntposition.longitude, place.latitude, place.longitude);
 
     // console.log("road",road);
 
-    const walk = road / 0.08
-    console.log('walk', walk)
+    const walk = road / 0.08;
+    console.log("walk", walk);
 
-    const car = road / 34
-    console.log('car', car)
+    const car = road / 34;
+    console.log("car", car);
 
-    const train = road / 100
-    console.log('train', train)
+    const train = road / 100;
+    console.log("train", train);
 
     if (car < 1) {
-      console.log('carMini', car * 60)
+      console.log("carMini", car * 60);
     }
     if (train < 1) {
-      console.log('trainMini', train * 60)
+      console.log("trainMini", train * 60);
     }
-  }
+  };
 
-  function Icon(location: { likes: number }) {
+  function Icon(location: { scale: number,likes:number }) {
     const showIcon =
-      location.likes < 10000
-        ?  blueicon 
-        : location.likes >= 10000 && location.likes < 100000
+      location.scale == 1
+        ? blueicon
+        : location.scale == 2
           ? greenicon
-          : fireicon
+          : location.scale == 3
+            ? redIcon
+            : fireicon;
 
     return L.divIcon({
-      className: 'custom-marker',
+      className: "custom-marker",
       html: `
               <div style="position: relative; text-align: center;">
                 <img src=${showIcon} style="width: 50px; height: 50px;" />
@@ -127,12 +139,14 @@ function PinLocate({ setModalWindowIsOpen, arrDistance, correntposition }: PinLo
               `,
       iconSize: [50, 50],
       iconAnchor: [25, 25],
-    })
+    });
   }
+
+  const uniqueArrDistance = Array.from(new Map(arrDistance.map((distance) => [distance.latitude, distance])).values());
 
   return (
     <div>
-      {arrDistance.map((place, index) => (
+      {uniqueArrDistance.map((place, index) => (
         //   console.log("location",location.position[0])
         <Marker
           position={[place.latitude, place.longitude]}

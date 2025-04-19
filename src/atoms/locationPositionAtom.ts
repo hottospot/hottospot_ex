@@ -12,6 +12,7 @@ interface locationPositionAtomProps {
   place?: string | null;
   latitude?:number | null;
   longitude?:number | null;
+  scale?:number|null;
 }
 export const locationPositionAtom = atom<locationPositionAtomProps>({
   explanation:null,
@@ -22,7 +23,8 @@ export const locationPositionAtom = atom<locationPositionAtomProps>({
   userName:null,
   place:null,
   latitude:null,
-  longitude:null
+  longitude:null,
+  scale:null
 });
 
 interface MapBoundsAtomProps {
