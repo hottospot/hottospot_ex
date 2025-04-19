@@ -1,5 +1,4 @@
 import "leaflet/dist/leaflet.css";
-import * as turf from "@turf/turf";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
 import { useEffect, useRef, useState } from "react";
