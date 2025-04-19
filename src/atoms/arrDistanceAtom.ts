@@ -12,6 +12,7 @@ interface arrDistanceProps {
   title: string;
   photoName: string;
   place: string;
+  scale:number;
 }
 
 export const arrDistanceAtom = atom<arrDistanceProps[]>([
@@ -27,5 +28,6 @@ export const arrDistanceAtom = atom<arrDistanceProps[]>([
     photoName: "",
     title: "",
     place: "",
+    scale:0
   },
 ]);

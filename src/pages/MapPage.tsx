@@ -1,5 +1,4 @@
 import "leaflet/dist/leaflet.css";
-import * as turf from "@turf/turf";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +14,8 @@ import style from "./MapPage.module.scss";
 import { GetMethod } from "../components/ResponseMethod";
 import { useLocation } from "react-router-dom";
 
+
+import { sendZoomAtom } from "../atoms/sendZoomAtom";
 import { nowPositionAtom } from "../atoms/nowPositionAtom";
 import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
 import { isSearchAtom } from "../atoms/isSearchAtom";
@@ -38,10 +39,11 @@ function MapPage() {
   const setMapBounds = useSetAtom(MapBoundsAtom);
   const [arrDistance, setArrDistance] = useAtom(arrDistanceAtom);
   const isSearch = useAtomValue(isSearchAtom);
+  const [sendZoom, setSendZoom] = useAtom(sendZoomAtom);
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
-  console.log("center", center);
+  console.log('center', center)
 
   const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number];
 
@@ -98,17 +100,18 @@ function MapPage() {
 
     console.log("zoomLevel", zoomLevel);
 
-    let sendZoom = 0;
-
     if (zoomLevel < 8) {
-      sendZoom = 3;
+      setSendZoom(4);
     }
-    if (zoomLevel >= 8 && zoomLevel < 12) {
-      sendZoom = 2;
+    if (zoomLevel >= 8 && zoomLevel < 10) {
+      setSendZoom(3);
+    }
+    if (zoomLevel >= 10 && zoomLevel < 12) {
+      setSendZoom(2);
     }
 
     if (zoomLevel >= 12) {
-      sendZoom = 1;
+      setSendZoom(1);
     }
     console.log("sendZoom", sendZoom);
     const map = useMapEvents({
@@ -151,6 +154,7 @@ function MapPage() {
               title: string;
               photoName: string;
               place: string;
+              scale: number;
             }) => ({
               explanation: d.explanation,
               latitude: d.latitude,
@@ -163,6 +167,7 @@ function MapPage() {
               title: d.title,
               photoName: d.photoName,
               place: d.place,
+              scale: d.scale,
             })
           ),
         ]);
@@ -171,30 +176,6 @@ function MapPage() {
 
     return null;
   };
-
-  //距離の計算
-  const R = Math.PI / 180;
-  function distance(lat1: number, lng1: number, lat2: number, lng2: number) {
-    lat1 *= R;
-    lng1 *= R;
-    lat2 *= R;
-    lng2 *= R;
-    return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
-  }
-
-  arrDistance.map((d) => {
-    //console.log("d.position",d.position)
-    //現在の経度緯度、目的地の経度緯度
-    console.log("distance", distance(correntposition.latitude, correntposition.longitude, d.latitude, d.longitude));
-  });
-
-  // console.log(`arrDistanceの距離${arrDistance}`);
-
-  const from = turf.point([correntposition.longitude, correntposition.latitude]);
-  const to = turf.point([139.74543043734087, 35.65862055760233]);
-  const d = turf.distance(from, to, { units: "kilometers" });
-
-  console.log(`${d} km`);
 
   return (
     <>
@@ -210,7 +191,9 @@ function MapPage() {
         <MapContainer
           center={arrCenter}
           zoom={11}
-          scrollWheelZoom={false}
+          scrollWheelZoom
+          doubleClickZoom={false}
+          zoomControl={false}
           // zoomControl={false} //ズームバー（開発時のみ)
           style={{ height: "100vh", width: "100vw" }}
           key={`${correntposition.latitude}-${correntposition.longitude}`} // ←座標が変わると再描画
@@ -226,14 +209,11 @@ function MapPage() {
           <SetViewOnClick />
           <Marker position={arrCenter} />
 
-          {arrDistance.map((__, index) => (
-            <PinLocate
-              setModalWindowIsOpen={setModalWindowIsOpen}
-              arrDistance={arrDistance}
-              key={index}
-              correntposition={correntposition}
-            />
-          ))}
+          <PinLocate
+            setModalWindowIsOpen={setModalWindowIsOpen}
+            arrDistance={arrDistance}
+            correntposition={correntposition}
+          />
         </MapContainer>
       </div>
       <div className={style.form}>
