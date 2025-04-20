@@ -8,18 +8,10 @@ import style from "./ModalSheet.module.scss";
 import PlaceInfo from "./modalSheetCards/PlaceInfo";
 
 const noScroll = () => {
-  const handleScroll = (e: Event) => {
-    e.preventDefault();
-  };
-
   document.body.style.overflow = "hidden";
 };
 
 const allowScroll = () => {
-  const handleScroll = (e: Event) => {
-    e.preventDefault();
-  };
-
   document.body.style.overflow = "auto";
 };
 

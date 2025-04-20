@@ -10,19 +10,12 @@ import { isSearchAtom } from "../atoms/isSearchAtom";
 import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
 import { nowPositionAtom } from "../atoms/nowPositionAtom";
-import { sendZoomAtom } from "../atoms/sendZoomAtom";
 import PinLocate from "../components/PinLocate";
 import { GetMethod } from "../components/ResponseMethod";
 import { Search } from "../components/Search";
 import ModalSheet from "../components/modalsheet/ModalSheet";
 
 import style from "./MapPage.module.scss";
-import { GetMethod } from "../components/ResponseMethod";
-import { useLocation } from "react-router-dom";
-
-import { nowPositionAtom } from "../atoms/nowPositionAtom";
-import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
-import { isSearchAtom } from "../atoms/isSearchAtom";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -106,7 +99,6 @@ function MapPage() {
         } else if (currentZoom >= 15) {
           newZoom = 1;
         }
-        
 
         setMapBounds({
           northEastLat: northEast.lat,
@@ -114,7 +106,6 @@ function MapPage() {
           northEastLng: northEast.lng,
           southWestLng: southWest.lng,
         });
-    
 
         const data = await GetMethod(
           `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=${newZoom}`
