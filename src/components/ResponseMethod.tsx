@@ -2,7 +2,6 @@ export const GetMethod = async (link: string) => {
   return await fetch(link, { method: "GET" })
     .then((res) => res.json()) //json方式でデータを受け取る
     .then((data) => {
-      console.log("data:", data);
       return data;
     })
 
@@ -19,7 +18,6 @@ export const PostMethod = (link: string, data: string) => {
   })
     .then((res) => res.json()) //json方式でデータを受け取る
     .then((data) => {
-      console.log("data:", data);
       return data;
     })
 

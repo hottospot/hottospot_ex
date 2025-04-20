@@ -20,7 +20,6 @@ function Top() {
     useEffect(() => {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords
-        // console.log('{ latitude, longitude }', { latitude, longitude })
         setCorrentPosition({ latitude, longitude })
       })
   

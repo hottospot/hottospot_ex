@@ -21,9 +21,6 @@ function PlaceInfo() {
   const modes = ["driving", "walking", "bicycling", "transit"];
   const [expanded, setExpanded] = useState(false);
 
-  console.log("position", position);
-  console.log('"position.name', position.tiktokTitle);
-
   const apiUrl = import.meta.env.VITE_API_KEY;
 
   useEffect(() => {
@@ -32,71 +29,49 @@ function PlaceInfo() {
     }
   }, [modalWindowIsOpen]);
 
-  const arr = position.tags ? JSON.parse(position.tags) : undefined;
-
-  console.log("arr", arr);
-
   //const jsonTitle = JSON.stringify(position.tags)
 
   const handleShare = () => {
-    console.log("シェアボタンが押されました。");
     const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
     window.open(shareUrl);
   };
 
   const handleClose = () => {
-    console.log("閉じるボタンが押されました。");
     setModalWindowIsOpen(false);
   };
 
   const handleWalk = async () => {
-    console.log("徒歩ボタンが押されました。");
-    console.log("nowposition", nowposition);
     setSelectedTransport("walk");
 
     const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[1]}`;
     const res = await GetMethod(RootUrl);
-    console.log("res", JSON.stringify(res));
-    console.log("walkminuts", res.routes.distance);
     setDuration(res.routes.duration);
     setDistance(res.routes.distance);
   };
 
   const handleBicycling = async () => {
-    console.log("自転車ボタンが押されました。");
     setSelectedTransport("bicycling");
 
     const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[2]}`;
     const res = await GetMethod(RootUrl);
-    console.log("res", JSON.stringify(res));
-    console.log("carminuts", res.routes.duration);
     setDuration(res.routes.duration);
   };
 
   const handleCar = async () => {
-    console.log("車ボタンが押されました。");
     setSelectedTransport("car");
 
     const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
     const res = await GetMethod(RootUrl);
-    console.log("res", JSON.stringify(res));
-    console.log("carminuts", res.routes.duration);
     setDuration(res.routes.duration);
   };
 
   const handleTrain = async () => {
-    console.log("電車ボタンが押されました。");
     setSelectedTransport("train");
 
     const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
     const res = await GetMethod(RootUrl);
-    console.log("res", JSON.stringify(res));
-    console.log("trainminuts", res.routes.duration);
     setDuration(res.routes.duration);
   };
-  console.log("position", position);
-
-  console.log("modalWindowIsOpen", modalWindowIsOpen);
 
   // const hashtagArr = arr.map((data:string) => `#${data}`)
 
@@ -105,11 +80,7 @@ function PlaceInfo() {
 
   const tiktokTitle = position.tiktokTitle ?? "";
 
-  console.log("tiktokTitle", tiktokTitle.length);
-
   const isDetailsLong = tiktokTitle.length > 150;
-
-  console.log("expanded", expanded);
 
   const displayDetails = isDetailsLong && !expanded ? tiktokTitle.slice(0, 150) + "…" : tiktokTitle;
 
