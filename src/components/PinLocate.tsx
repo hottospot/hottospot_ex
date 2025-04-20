@@ -75,6 +75,10 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
     });
 
     setSendZoom(2);
+
+    map.setView([place.latitude, place.longitude], 13, {
+      animate: true,
+    });
   };
 
   function Icon(location: { scale: number; likes: number; place:string}) {
@@ -82,7 +86,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
       location.scale == 1 ? {icon:blueicon , width:"60"} : location.scale == 2 ? {icon:greenicon,width:"70"} : location.scale == 3 ? {icon:redIcon,width:"90"} : {icon:fireicon,width:"100"};
 
     const textSVG =
-      zoomLevel > 12
+      zoomLevel > 13
         ? `
           <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
           font-size="20" font-weight="bold" fill="white"
