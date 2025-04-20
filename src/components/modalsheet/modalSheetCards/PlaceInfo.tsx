@@ -29,8 +29,6 @@ function PlaceInfo() {
     }
   }, [modalWindowIsOpen]);
 
-  const arr = position.tags ? JSON.parse(position.tags) : undefined;
-
   //const jsonTitle = JSON.stringify(position.tags)
 
   const handleShare = () => {
@@ -81,6 +79,7 @@ function PlaceInfo() {
   // const displayText = expanded || !isLong ? hashtagArr.length : hashtagArr.length.slice(0, 22) + "…";
 
   const tiktokTitle = position.tiktokTitle ?? "";
+
   const isDetailsLong = tiktokTitle.length > 150;
 
   const displayDetails = isDetailsLong && !expanded ? tiktokTitle.slice(0, 150) + "…" : tiktokTitle;
