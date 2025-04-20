@@ -1,4 +1,4 @@
-import { SetStateAction, useAtom } from "jotai";
+import { SetStateAction, useAtom, useSetAtom } from "jotai";
 import L from "leaflet";
 import React, { useState } from "react";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
@@ -9,6 +9,7 @@ import greenicon from "../../public/img/greenPin.svg";
 import redIcon from "../../public/img/redPin.svg";
 import { locationPositionAtom } from "../atoms/locationPositionAtom";
 import { sendZoomAtom } from "../atoms/sendZoomAtom";
+import { isLoadingAtom } from "../atoms/isLoading";
 interface PinLocateProps {
   setModalWindowIsOpen: React.Dispatch<SetStateAction<boolean>>;
   arrDistance: {
@@ -37,6 +38,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
 
   const [__, setPosition] = useAtom(locationPositionAtom); //選択した場所の情報
   const [, setSendZoom] = useAtom(sendZoomAtom);
+  const setIsLoading = useSetAtom(isLoadingAtom);
 
   useMapEvents({
     zoomend: () => {
@@ -58,30 +60,32 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
     place: string;
     scale: number;
   }) => {
-    setModalWindowIsOpen(true);
-    setPosition({
-      explanation: place.explanation,
-      tags: place.tags,
-      tiktokTitle: place.tiktokTitle,
-      userName: place.userName,
-      url: place.url,
-      title: place.title,
-      likes: place.likes,
-      photoName: place.photoName,
-      place: place.place,
-      latitude: place.latitude,
-      longitude: place.longitude,
-      scale: place.scale,
-    });
-
-    setSendZoom(2);
-
-    map.setView([place.latitude, place.longitude], 13, {
-      animate: true,
-    });
+    try {
+      setIsLoading(false);
+      setModalWindowIsOpen(true);
+      setPosition({
+        explanation: place.explanation,
+        tags: place.tags,
+        tiktokTitle: place.tiktokTitle,
+        userName: place.userName,
+        url: place.url,
+        title: place.title,
+        likes: place.likes,
+        photoName: place.photoName,
+        place: place.place,
+        latitude: place.latitude,
+        longitude: place.longitude,
+        scale: place.scale,
+      });
+      setSendZoom(2);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  function Icon(location: { scale: number; likes: number; place:string}) {
+  function Icon(location: { scale: number; likes: number; place: string }) {
     const showIcon =
       location.scale == 1 ? {icon:blueicon , width:"120", stopColor:"#4FF8F8",startColor:"#4B89ED"} : location.scale == 2 ? {icon:greenicon,width:"130",stopColor:"#A7F84F",startColor:"#4BED74"} : location.scale == 3 ? {icon:redIcon,width:"140",stopColor:"#F84F90",startColor:"#ED4B4B"} : {icon:fireicon,width:"160",stopColor:"#F84F90",startColor:"#ED4B4B"};
 
@@ -95,7 +99,6 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
       </text>
           
           `
-          
         : "";
 
     return L.divIcon({

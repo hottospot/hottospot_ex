@@ -2,14 +2,15 @@ import { Icon } from "@iconify/react";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 
+import { isLoadingAtom } from "../../../atoms/isLoading";
 import { locationPositionAtom } from "../../../atoms/locationPositionAtom";
+import { modalWindowAtom } from "../../../atoms/modalWindowAtom";
+import { nowPositionAtom } from "../../../atoms/nowPositionAtom";
 import GradationIconButton from "../../../layout/GradationIconButton";
+import { LoadingGradient } from "../../../layout/LoadingGradient";
+import { GetMethod } from "../../ResponseMethod";
 
 import styles from "./PlaceInfo.module.scss";
-import { modalWindowAtom } from "../../../atoms/modalWindowAtom";
-
-import { GetMethod } from "../../ResponseMethod";
-import { nowPositionAtom } from "../../../atoms/nowPositionAtom";
 
 function PlaceInfo() {
   const [position, _] = useAtom(locationPositionAtom); //押した場所の情報
@@ -18,8 +19,13 @@ function PlaceInfo() {
   const [selectedTransport, setSelectedTransport] = useState<"walk" | "car" | "train" | "bicycling">("walk");
   const [duration, setDuration] = useState<{ hour: string; mins: string }>();
   const [distance, setDistance] = useState();
+
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const modes = ["driving", "walking", "bicycling", "transit"];
   const [expanded, setExpanded] = useState(false);
+
+  console.log("position", position);
+  console.log('"position.name', position.tiktokTitle);
 
   const apiUrl = import.meta.env.VITE_API_KEY;
 
@@ -32,6 +38,7 @@ function PlaceInfo() {
   //const jsonTitle = JSON.stringify(position.tags)
 
   const handleShare = () => {
+
     const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
     window.open(shareUrl);
   };
@@ -41,37 +48,76 @@ function PlaceInfo() {
   };
 
   const handleWalk = async () => {
-    setSelectedTransport("walk");
+    try {
+      setIsLoading(true);
+      setSelectedTransport("walk");
 
-    const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[1]}`;
-    const res = await GetMethod(RootUrl);
-    setDuration(res.routes.duration);
-    setDistance(res.routes.distance);
+      const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[2]}`;
+      const res = await GetMethod(RootUrl);
+      console.log("res", JSON.stringify(res));
+      console.log("walkminuts", res.routes.distance);
+      setDuration(res.routes.duration);
+      setDistance(res.routes.distance);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBicycling = async () => {
-    setSelectedTransport("bicycling");
+    try {
+      setIsLoading(true);
+      setSelectedTransport("bicycling");
 
-    const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[2]}`;
-    const res = await GetMethod(RootUrl);
-    setDuration(res.routes.duration);
+      const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
+      const res = await GetMethod(RootUrl);
+      console.log("res", JSON.stringify(res));
+      console.log("carminuts", res.routes.duration);
+      setDuration(res.routes.duration);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCar = async () => {
-    setSelectedTransport("car");
+    try {
+      setIsLoading(true);
+      setSelectedTransport("car");
 
-    const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
-    const res = await GetMethod(RootUrl);
-    setDuration(res.routes.duration);
+      const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
+      const res = await GetMethod(RootUrl);
+      console.log("res", JSON.stringify(res));
+      console.log("carminuts", res.routes.duration);
+      setDuration(res.routes.duration);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleTrain = async () => {
-    setSelectedTransport("train");
+    try {
+      setIsLoading(true);
+      setSelectedTransport("train");
 
-    const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
-    const res = await GetMethod(RootUrl);
-    setDuration(res.routes.duration);
+      const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
+      const res = await GetMethod(RootUrl);
+      console.log("res", JSON.stringify(res));
+      console.log("trainminuts", res.routes.duration);
+      setDuration(res.routes.duration);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
+  console.log("position", position);
+
+  console.log("modalWindowIsOpen", modalWindowIsOpen);
 
   // const hashtagArr = arr.map((data:string) => `#${data}`)
 
@@ -90,6 +136,7 @@ function PlaceInfo() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.handle} />
       <div className={styles.whole}>
         <div className={styles.header}>
           <div className={styles.title}>
@@ -184,15 +231,21 @@ function PlaceInfo() {
             </div>
           </div>
 
-          <div className={styles.hour}>{duration?.hour}</div>
-
-          <div className={styles.minutes}>{duration?.mins || "ー"}</div>
+          <div className={styles.minutes}>
+            {isLoading && duration?.hour}
+            {isLoading ? <LoadingGradient /> : duration?.mins || "ー"}
+          </div>
 
           {position.url ? (
             <a
               className={styles.url}
               href={position.url}
             >
+              <span>参考元へ飛ぶ</span>
+              <Icon
+                icon="heroicons:arrow-up-right-solid"
+                style={{ fontSize: "15px", color: "#00aaf2" }}
+              />
               参考元
             </a>
           ) : (
