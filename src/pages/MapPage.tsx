@@ -154,7 +154,7 @@ function MapPage() {
   const customMarker = () => {
     
     return L.icon({
-      iconUrl: "../../public/img/blue.svg",
+      iconUrl: "/img/blue.svg",
       iconSize: [35, 35],
       className: "marker",
     });
