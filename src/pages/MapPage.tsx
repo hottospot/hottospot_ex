@@ -1,7 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 
 import { MapBoundsAtom } from "../atoms/locationPositionAtom";
@@ -14,7 +14,6 @@ import style from "./MapPage.module.scss";
 import { GetMethod } from "../components/ResponseMethod";
 import { useLocation } from "react-router-dom";
 
-import { sendZoomAtom } from "../atoms/sendZoomAtom";
 import { nowPositionAtom } from "../atoms/nowPositionAtom";
 import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
 import { isSearchAtom } from "../atoms/isSearchAtom";
@@ -34,18 +33,14 @@ function MapPage() {
   const map_key = import.meta.env.VITE_MAP_KEY;
   const location = useLocation();
   const correntposition = location.state.correntposition;
-  console.log(correntposition);
   const setMapBounds = useSetAtom(MapBoundsAtom);
   const [arrDistance, setArrDistance] = useAtom(arrDistanceAtom);
   const isSearch = useAtomValue(isSearchAtom);
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
-  console.log("center", center);
-
   const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number];
 
-  console.log("arrCenter", arrCenter);
   const [, setModalWindowIsOpen] = useAtom(modalWindowAtom);
   const setNowPostion = useSetAtom(nowPositionAtom);
   setNowPostion(arrCenter);
@@ -67,17 +62,10 @@ function MapPage() {
           northEastLng: northEast.lng,
           southWestLng: southWest.lng,
         });
-        console.log("SouthWest.lat:", southWest.lat);
-        console.log("SouthWest.lng:", southWest.lng); // 緯度・経度
-        console.log("NorthEast.lat:", northEast.lat);
-        console.log("NorthEast.lng:", northEast.lng);
         const data = await GetMethod(
           `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=2`
         );
-        console.log("data", data);
         setArrDistance(data);
-
-        console.log("initializedRef.curren", initializedRef.current);
       };
       fetchData();
     }, []);
@@ -89,7 +77,6 @@ function MapPage() {
 
   //   const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom());
 
-  //   console.log("sendZoom", sendZoom);
   const MapBoundsLogger = () => {
     const mapzoom = useMap();
 

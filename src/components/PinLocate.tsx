@@ -131,7 +131,6 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   return (
     <div>
       {uniqueArrDistance.map((place, index) => (
-        //   console.log("location",location.position[0])
         <Marker
           position={[place.latitude, place.longitude]}
           icon={Icon(place)}
