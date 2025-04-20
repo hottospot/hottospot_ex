@@ -30,7 +30,6 @@ function SetViewOnClick() {
 
 function MapPage() {
   const api = import.meta.env.VITE_API_KEY;
-  const map_key = import.meta.env.VITE_MAP_KEY;
   const location = useLocation();
   const correntposition = location.state.correntposition;
   const setMapBounds = useSetAtom(MapBoundsAtom);
