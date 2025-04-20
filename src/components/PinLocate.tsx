@@ -83,16 +83,16 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
 
   function Icon(location: { scale: number; likes: number; place:string}) {
     const showIcon =
-      location.scale == 1 ? {icon:blueicon , width:"60"} : location.scale == 2 ? {icon:greenicon,width:"70"} : location.scale == 3 ? {icon:redIcon,width:"90"} : {icon:fireicon,width:"100"};
+      location.scale == 1 ? {icon:blueicon , width:"120", stopColor:"#4FF8F8",startColor:"#4B89ED"} : location.scale == 2 ? {icon:greenicon,width:"130",stopColor:"#A7F84F",startColor:"#4BED74"} : location.scale == 3 ? {icon:redIcon,width:"140",stopColor:"#F84F90",startColor:"#ED4B4B"} : {icon:fireicon,width:"160",stopColor:"#F84F90",startColor:"#ED4B4B"};
 
     const textSVG =
-      zoomLevel > 13
+      zoomLevel > 15
         ? `
           <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
-          font-size="20" font-weight="bold" fill="white"
-          stroke="url(#grad-stroke)" stroke-width="1">
-            ${location.likes}
-          </text>
+        font-size="20" font-weight="bold" fill="white"
+        stroke="#ED4B4B" stroke-width="1.5">
+        ${location.likes}
+      </text>
           
           `
           
@@ -104,14 +104,9 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
               <div style="position: relative; text-align: center;">
       <img src=${showIcon.icon} style="width: 50px; height: 50px;" />
       
-      <div style="position: absolute; top: 140%; left: 50%; transform: translate(-50%, -210%);">
+      <div style="position: absolute; top: 140%; left: 130%; transform: translate(-50%, -210%);">
         <svg viewBox="0 0 100 30" width=${showIcon.width} height="30">
-          <defs>
-            <linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#F84F90"/>
-              <stop offset="100%" stop-color="#ED4B4B"/>
-            </linearGradient>
-          </defs>
+          
           
           ${textSVG}
           
