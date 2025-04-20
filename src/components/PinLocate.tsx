@@ -3,10 +3,10 @@ import L from "leaflet";
 import React, { useState } from "react";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
 
-import blueicon from "../../public/img/bluePIn.svg";
-import fireicon from "../../public/img/firePin.svg";
-import greenicon from "../../public/img/greenPin.svg";
-import redIcon from "../../public/img/redPin.svg";
+import blueicon from "../../public/img/blueIcon.svg";
+import fireicon from "../../public/img/fireIcon.svg";
+import greenicon from "../../public/img/greenIcon.svg";
+import redIcon from "../../public/img/redIcon.svg";
 import { locationPositionAtom } from "../atoms/locationPositionAtom";
 import { sendZoomAtom } from "../atoms/sendZoomAtom";
 import { isLoadingAtom } from "../atoms/isLoading";
@@ -94,7 +94,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
         ? `
           <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
         font-size="20" font-weight="bold" fill="white"
-        stroke="#ED4B4B" stroke-width="1.5">
+        stroke="#ED4B4B" stroke-width="1.2">
         ${location.likes}
       </text>
           
@@ -108,7 +108,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
       <img src=${showIcon.icon} style="width: 50px; height: 50px;" />
       
       <div style="position: absolute; top: 140%; left: 130%; transform: translate(-50%, -210%);">
-        <svg viewBox="0 0 100 30" width=${showIcon.width} height="30">
+        <svg viewBox="0 0 100 30" width=${showIcon.width} height="40">
           
           
           ${textSVG}
