@@ -19,6 +19,7 @@ function PlaceInfo() {
   const [selectedTransport, setSelectedTransport] = useState<"walk" | "car" | "train" | "bicycling">("walk");
   const [duration, setDuration] = useState<{ hour: string; mins: string }>();
   const [distance, setDistance] = useState();
+
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const modes = ["driving", "walking", "bicycling", "transit"];
   const [expanded, setExpanded] = useState(false);
@@ -34,28 +35,21 @@ function PlaceInfo() {
     }
   }, [modalWindowIsOpen]);
 
-  const arr = position.tags ? JSON.parse(position.tags) : undefined;
-
-  console.log("arr", arr);
-
   //const jsonTitle = JSON.stringify(position.tags)
 
   const handleShare = () => {
-    console.log("シェアボタンが押されました。");
+
     const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
     window.open(shareUrl);
   };
 
   const handleClose = () => {
-    console.log("閉じるボタンが押されました。");
     setModalWindowIsOpen(false);
   };
 
   const handleWalk = async () => {
     try {
       setIsLoading(true);
-      console.log("徒歩ボタンが押されました。");
-      console.log("nowposition", nowposition);
       setSelectedTransport("walk");
 
       const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[2]}`;
@@ -74,7 +68,6 @@ function PlaceInfo() {
   const handleBicycling = async () => {
     try {
       setIsLoading(true);
-      console.log("自転車ボタンが押されました。");
       setSelectedTransport("bicycling");
 
       const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
@@ -92,7 +85,6 @@ function PlaceInfo() {
   const handleCar = async () => {
     try {
       setIsLoading(true);
-      console.log("車ボタンが押されました。");
       setSelectedTransport("car");
 
       const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[0]}`;
@@ -110,7 +102,6 @@ function PlaceInfo() {
   const handleTrain = async () => {
     try {
       setIsLoading(true);
-      console.log("電車ボタンが押されました。");
       setSelectedTransport("train");
 
       const RootUrl = `${apiUrl}/route?latOrigin=${nowposition?.[0]}&lonOrigin=${nowposition?.[1]}&latDestination=${position.latitude}&lonDestination=${position.longitude}&mode=${modes?.[3]}`;
@@ -135,11 +126,7 @@ function PlaceInfo() {
 
   const tiktokTitle = position.tiktokTitle ?? "";
 
-  // console.log("tiktokTitle", tiktokTitle.length);
-
   const isDetailsLong = tiktokTitle.length > 150;
-
-  console.log("expanded", expanded);
 
   const displayDetails = isDetailsLong && !expanded ? tiktokTitle.slice(0, 150) + "…" : tiktokTitle;
 
@@ -259,6 +246,7 @@ function PlaceInfo() {
                 icon="heroicons:arrow-up-right-solid"
                 style={{ fontSize: "15px", color: "#00aaf2" }}
               />
+              参考元
             </a>
           ) : (
             <div>ー</div>

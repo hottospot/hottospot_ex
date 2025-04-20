@@ -1,7 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
 import { useLocation } from "react-router-dom";
 
@@ -17,6 +17,12 @@ import { Search } from "../components/Search";
 import ModalSheet from "../components/modalsheet/ModalSheet";
 
 import style from "./MapPage.module.scss";
+import { GetMethod } from "../components/ResponseMethod";
+import { useLocation } from "react-router-dom";
+
+import { nowPositionAtom } from "../atoms/nowPositionAtom";
+import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
+import { isSearchAtom } from "../atoms/isSearchAtom";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -33,20 +39,15 @@ function MapPage() {
   const map_key = import.meta.env.VITE_MAP_KEY;
   const location = useLocation();
   const correntposition = location.state.correntposition;
-  console.log(correntposition);
   const setMapBounds = useSetAtom(MapBoundsAtom);
   const [arrDistance, setArrDistance] = useAtom(arrDistanceAtom);
   const isSearch = useAtomValue(isSearchAtom);
-  const [sendZoom, setSendZoom] = useAtom(sendZoomAtom);
 
   const center = new LatLng(correntposition.latitude, correntposition.longitude); //座標オブジェクトLatLng
 
-  console.log("center", center);
-
   const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number];
 
-  console.log("arrCenter", arrCenter);
-  const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom);
+  const [, setModalWindowIsOpen] = useAtom(modalWindowAtom);
   const setNowPostion = useSetAtom(nowPositionAtom);
   setNowPostion(arrCenter);
 
@@ -67,17 +68,10 @@ function MapPage() {
           northEastLng: northEast.lng,
           southWestLng: southWest.lng,
         });
-        console.log("SouthWest.lat:", southWest.lat);
-        console.log("SouthWest.lng:", southWest.lng); // 緯度・経度
-        console.log("NorthEast.lat:", northEast.lat);
-        console.log("NorthEast.lng:", northEast.lng);
         const data = await GetMethod(
           `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=2`
         );
-        console.log("data", data);
         setArrDistance(data);
-
-        console.log("initializedRef.curren", initializedRef.current);
       };
       fetchData();
     }, []);
@@ -85,41 +79,34 @@ function MapPage() {
     return null;
   };
 
+  // const MapBoundsLogger = () => {
+
+  //   const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom());
+
   const MapBoundsLogger = () => {
     const mapzoom = useMap();
 
-    const [zoomLevel, setZoomLevel] = useState(mapzoom.getZoom());
-
     useMapEvents({
-      zoomend: () => {
-        setZoomLevel(mapzoom.getZoom());
-      },
-    });
-
-    console.log("zoomLevel", zoomLevel);
-
-    if (zoomLevel < 8) {
-      setSendZoom(4);
-    }
-    if (zoomLevel >= 8 && zoomLevel < 12) {
-      setSendZoom(3);
-    }
-    if (zoomLevel >= 12 && zoomLevel < 14) {
-      setSendZoom(2);
-    }
-
-    if (zoomLevel >= 14) {
-      setSendZoom(1);
-    }
-    console.log("sendZoom", sendZoom);
-    const map = useMapEvents({
       //leafletのイベントハンドラを使うことができる
       moveend: async () => {
         if (isSearch) return; // 検索している時にデータ取得をスキップ
 
-        const bounds = map.getBounds();
+        const bounds = mapzoom.getBounds();
         const southWest = bounds.getSouthWest(); // 左下
         const northEast = bounds.getNorthEast(); // 右上
+        const currentZoom = mapzoom.getZoom();
+
+        let newZoom = 2;
+        if (currentZoom < 8) {
+          newZoom = 4;
+        } else if (currentZoom >= 8 && currentZoom < 12) {
+          newZoom = 3;
+        } else if (currentZoom >= 12 && currentZoom < 15) {
+          newZoom = 2;
+        } else if (currentZoom >= 15) {
+          newZoom = 1;
+        }
+        
 
         setMapBounds({
           northEastLat: northEast.lat,
@@ -127,13 +114,10 @@ function MapPage() {
           northEastLng: northEast.lng,
           southWestLng: southWest.lng,
         });
-        console.log("SouthWest.lat:", southWest.lat);
-        console.log("SouthWest.lng:", southWest.lng);
-        console.log("NorthEast.lat:", northEast.lat);
-        console.log("NorthEast.lng:", northEast.lng);
+    
 
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=${sendZoom}`
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=${newZoom}`
         );
 
         setArrDistance([]);

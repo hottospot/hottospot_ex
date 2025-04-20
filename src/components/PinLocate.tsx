@@ -96,7 +96,7 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
             : { icon: fireicon, width: "100" };
 
     const textSVG =
-      zoomLevel > 12
+      zoomLevel > 13
         ? `
           <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
           font-size="20" font-weight="bold" fill="white"
@@ -140,7 +140,6 @@ function PinLocate({ setModalWindowIsOpen, arrDistance }: PinLocateProps) {
   return (
     <div>
       {uniqueArrDistance.map((place, index) => (
-        //   console.log("location",location.position[0])
         <Marker
           position={[place.latitude, place.longitude]}
           icon={Icon(place)}
