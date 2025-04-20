@@ -3,10 +3,11 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
 import { useEffect, useRef } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
-import { useLocation } from "react-router-dom";
 
+import { useLocation } from "react-router-dom";
 import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
 import { isSearchAtom } from "../atoms/isSearchAtom";
+import L from "leaflet";
 import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
 import { nowPositionAtom } from "../atoms/nowPositionAtom";
@@ -29,7 +30,6 @@ function SetViewOnClick() {
 
 function MapPage() {
   const api = import.meta.env.VITE_API_KEY;
-  const map_key = import.meta.env.VITE_MAP_KEY;
   const location = useLocation();
   const correntposition = location.state.correntposition;
   const setMapBounds = useSetAtom(MapBoundsAtom);
@@ -42,8 +42,9 @@ function MapPage() {
 
   const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom);
   const setNowPostion = useSetAtom(nowPositionAtom);
-  setNowPostion(arrCenter);
-
+  useEffect(() => {
+    setNowPostion(arrCenter);
+  }, [arrCenter]);
   const initializedRef = useRef(false);
 
   const MapBoundsLoggerFirst = () => {
@@ -62,7 +63,7 @@ function MapPage() {
           southWestLng: southWest.lng,
         });
         const data = await GetMethod(
-          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=2`
+          `${api}/markers?latMin=${southWest.lat}&latMax=${northEast.lat}&lngMin=${southWest.lng}&lngMax=${northEast.lng}&scale=3`
         );
         setArrDistance(data);
       };
@@ -150,6 +151,15 @@ function MapPage() {
     return null;
   };
 
+  const customMarker = () => {
+    
+    return L.icon({
+      iconUrl: "../../public/img/blue.svg",
+      iconSize: [35, 35],
+      className: "marker",
+    });
+  };
+
   return (
     <>
       <div className={style.form}>
@@ -169,15 +179,15 @@ function MapPage() {
           key={`${correntposition.latitude}-${correntposition.longitude}`} // ←座標が変わると再描画
         >
           <TileLayer
-            url={`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${map_key}`}
-            attribution='<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-          />
+  url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
+  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/">CARTO</a>'
+/>
 
           <MapBoundsLoggerFirst />
           <MapBoundsLogger />
 
           <SetViewOnClick />
-          <Marker position={arrCenter} />
+          <Marker position={arrCenter} icon={customMarker()}/>
 
           <PinLocate
             setModalWindowIsOpen={setModalWindowIsOpen}
