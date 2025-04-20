@@ -47,7 +47,7 @@ function MapPage() {
   const arrCenter = [Number(center.lat), Number(center.lng)] as [number, number];
 
   console.log("arrCenter", arrCenter);
-  const [modalWindowIsOpen, setModalWindowIsOpen] = useAtom(modalWindowAtom);
+  const [, setModalWindowIsOpen] = useAtom(modalWindowAtom);
   const setNowPostion = useSetAtom(nowPositionAtom);
   setNowPostion(arrCenter);
 
