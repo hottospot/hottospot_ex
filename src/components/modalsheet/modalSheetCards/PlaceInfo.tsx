@@ -136,6 +136,7 @@ function PlaceInfo() {
   return (
     <div className={styles.container}>
       <div className={styles.handle} />
+      <div className={styles.backWhite} />
       <div className={styles.whole}>
         <div className={styles.header}>
           <div className={styles.title}>

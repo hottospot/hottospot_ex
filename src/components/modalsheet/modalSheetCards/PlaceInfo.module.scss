@@ -15,6 +15,18 @@
     margin: 0 auto;
     background: #c6d1dd;
     border-radius: 12px;
+    z-index: 110;
+  }
+
+  .backWhite {
+    position: absolute;
+    width: 100vw;
+    height: 24px;
+    inset: 0 0 0 0;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    z-index: 100;
   }
 
   .whole {
