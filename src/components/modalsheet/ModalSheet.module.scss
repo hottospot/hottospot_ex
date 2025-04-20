@@ -3,7 +3,6 @@
   padding: 0;
   width: 100%;
   height: 100%;
-  box-shadow: inset 5em 5em 15rem #2abca7;
   touch-action: none;
 
   .container {
@@ -17,8 +16,6 @@
     flex-direction: column;
     align-items: center;
     bottom: 0;
-    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.36);
-    box-shadow: 0px 0px -16px rgba(0, 0, 0, -0.36);
     overflow: hidden;
   }
 }

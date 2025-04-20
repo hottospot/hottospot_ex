@@ -1,20 +1,18 @@
 import { motion } from "framer-motion";
 import { useAtom } from "jotai";
+import { useEffect } from "react";
 
 import { modalWindowAtom } from "../../atoms/modalWindowAtom";
 
 import style from "./ModalSheet.module.scss";
 import PlaceInfo from "./modalSheetCards/PlaceInfo";
-import { useEffect } from "react";
 
 const noScroll = () => {
   const handleScroll = (e: Event) => {
     e.preventDefault();
   };
 
-  document.body.style.overflow = "hidden"; // 基本的なスクロール防止（PC・スマホ両対応）
-  window.addEventListener("wheel", handleScroll, { passive: false });
-  window.addEventListener("touchmove", handleScroll, { passive: false });
+  document.body.style.overflow = "hidden";
 };
 
 const allowScroll = () => {
@@ -22,9 +20,7 @@ const allowScroll = () => {
     e.preventDefault();
   };
 
-  document.body.style.overflow = "auto"; // スクロール復活
-  window.removeEventListener("wheel", handleScroll);
-  window.removeEventListener("touchmove", handleScroll);
+  document.body.style.overflow = "auto";
 };
 
 function ModalSheet() {

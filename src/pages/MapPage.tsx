@@ -3,21 +3,20 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { LatLng } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent, useMapEvents } from "react-leaflet";
+import { useLocation } from "react-router-dom";
 
+import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
+import { isSearchAtom } from "../atoms/isSearchAtom";
 import { MapBoundsAtom } from "../atoms/locationPositionAtom";
 import { modalWindowAtom } from "../atoms/modalWindowAtom";
+import { nowPositionAtom } from "../atoms/nowPositionAtom";
+import { sendZoomAtom } from "../atoms/sendZoomAtom";
 import PinLocate from "../components/PinLocate";
+import { GetMethod } from "../components/ResponseMethod";
 import { Search } from "../components/Search";
 import ModalSheet from "../components/modalsheet/ModalSheet";
 
 import style from "./MapPage.module.scss";
-import { GetMethod } from "../components/ResponseMethod";
-import { useLocation } from "react-router-dom";
-
-import { sendZoomAtom } from "../atoms/sendZoomAtom";
-import { nowPositionAtom } from "../atoms/nowPositionAtom";
-import { arrDistanceAtom } from "../atoms/arrDistanceAtom";
-import { isSearchAtom } from "../atoms/isSearchAtom";
 
 function SetViewOnClick() {
   const map = useMapEvent("click", (e) => {
@@ -187,7 +186,7 @@ function MapPage() {
         <MapContainer
           center={arrCenter}
           zoom={11}
-          scrollWheelZoom
+          scrollWheelZoom={modalWindowIsOpen ? false : true}
           doubleClickZoom={false}
           zoomControl={false}
           // zoomControl={false} //ズームバー（開発時のみ)

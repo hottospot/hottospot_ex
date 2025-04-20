@@ -1,137 +1,145 @@
-.container{
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  overflow-y: scroll;
+  gap: 16px;
+
+  .handle {
+    position: absolute;
+    width: 32px;
+    height: 4px;
+    inset: 12px 0 0 0;
+    margin: 0 auto;
+    background: #c6d1dd;
+    border-radius: 12px;
+  }
+
+  .whole {
     display: flex;
-    flex-direction: column; 
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5%;
 
-    .whole{
+    .header {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      padding-top: 5%;
+      padding: 8px 0;
+      width: 84%;
+      height: 55%;
 
-      .header{
-        display: flex;
-        justify-content: space-between;
-        width: 90%;
-        height: 55%;
-
-        .title{
-          color: #24232D;
-          font-size: 180%;
-          font-weight: bold;
-        }
-
-        .buttons{
-          display: flex;
-          width: 27%;
-          justify-content: space-around;
-        }
-
-
+      .title {
+        color: #24232d;
+        font-size: 140%;
+        font-weight: bold;
+        line-break: auto;
       }
 
-      .subtitle{
-        width: 89%;
+      .buttons {
         display: flex;
-        color: #758693;
-        font-size:90%;
-
+        gap: 8px;
+        justify-content: space-around;
       }
-
     }
 
-    .middle{
+    .subtitle {
+      width: 85%;
       display: flex;
-      width: 100%;
-      height: 50%;
+      color: #758693;
+      font-size: 90%;
+    }
+  }
 
-      .middleLeft{
-        width: 50%;
+  .middle {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    height: 50%;
+
+    .middleLeft {
+      width: 50%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+
+      .img {
+        width: 90%;
         height: 100%;
-        display: flex;
-        justify-content: center;
-  
-        .img{
-          width: 90%;
-          height: 100%;
-          text-align: center;
-          background-color: #758693;
-          border-radius: 10%;
+        text-align: center;
+        background-color: #758693;
+        border-radius: 10%;
+      }
+    }
 
-        }
+    .middleRight {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      width: 40%;
+      height: 100%;
+
+      .targetTitle {
+        color: #758693;
+        font-size: 90%;
+        font-weight: 600;
       }
 
-      .middleRight{
+      .limit {
+        width: 90%;
+        color: #24232d;
+        font-size: 160%;
+        border-bottom: 1px solid #d2d9e0;
+        font-weight: 700;
+        padding-bottom: 3%;
+      }
+
+      .predict {
+        color: #758693;
+        font-size: 90%;
+        font-weight: 600;
+        margin-top: 3%;
+      }
+
+      .waysButton {
+        width: 90%;
+        margin-top: 2%;
         display: flex;
-        flex-direction: column;
-        text-align: left;
-        width: 50%;
-        height: 100%;
+        justify-content: flex-start;
+        gap: 3%;
+      }
 
-        .targetTitle{
-          color: #758693;
-          font-size: 90%;
-          font-weight: 600;
-        }
+      .hour {
+        color: #24232d;
+        font-size: 160%;
+        font-weight: 700;
+      }
 
-        .limit{
-          width: 90%;
-          color: #24232D;
-          font-size: 200%;
-          border-bottom: 1px solid #D2D9E0;
-          font-weight: 700;
-          padding-bottom: 3%
-        }
+      .minutes {
+        color: #24232d;
+        border-bottom: 1px solid #d2d9e0;
+        font-size: 160%;
+        font-weight: 700;
+        padding-bottom: 3%;
+      }
 
-        .predict{
-          color: #758693;
-          font-size: 90%;
-          font-weight: 600;
-          margin-top: 3%
-
-        }
-
-        .waysButton{
-          width: 90%;
-          margin-top: 2%;
-          display: flex;
-          justify-content: flex-end;
-          
-          .walk{
-            padding-right: 3%
-          }
-
-          .bicycling{
-            padding-right: 3%
-          }
-
-          .car{
-            padding-right: 3%
-          }
-
-        }
-
-        .hour{
-          color: #24232D;
-          font-size: 200%;
-          font-weight: 700;
-        }
-
-        .minutes{
-          color: #24232D;
-          border-bottom: 1px solid #D2D9E0;
-          font-size: 200%;
-          font-weight: 700;
-          padding-bottom: 3%
-        }
-        
-        .url{
-          all: unset;
-          color: #758693;
-          font-size: 90%;
-        }
+      .url {
+        margin-top: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        font-weight: 500;
+        padding: 4px 0;
+        width: 100%;
+        border-radius: 100px;
+        background-color: #e6f7ff;
+        color: #00aaf2;
+        font-size: 90%;
       }
     }
   }
+}
