@@ -38,7 +38,6 @@ function PlaceInfo() {
   //const jsonTitle = JSON.stringify(position.tags)
 
   const handleShare = () => {
-
     const shareUrl = `https://www.google.com/maps?q=${position.latitude},${position.longitude}`;
     window.open(shareUrl);
   };
@@ -137,6 +136,7 @@ function PlaceInfo() {
   return (
     <div className={styles.container}>
       <div className={styles.handle} />
+      <div className={styles.backWhite} />
       <div className={styles.whole}>
         <div className={styles.header}>
           <div className={styles.title}>
@@ -246,7 +246,6 @@ function PlaceInfo() {
                 icon="heroicons:arrow-up-right-solid"
                 style={{ fontSize: "15px", color: "#00aaf2" }}
               />
-              参考元
             </a>
           ) : (
             <div>ー</div>

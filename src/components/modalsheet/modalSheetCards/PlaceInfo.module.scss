@@ -11,10 +11,22 @@
     position: absolute;
     width: 32px;
     height: 4px;
-    inset: 12px 0 0 0;
+    inset: 16px 0 0 0;
     margin: 0 auto;
     background: #c6d1dd;
     border-radius: 12px;
+    z-index: 110;
+  }
+
+  .backWhite {
+    position: absolute;
+    width: 100vw;
+    height: 24px;
+    inset: 0 0 0 0;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    z-index: 100;
   }
 
   .whole {
@@ -59,6 +71,7 @@
     gap: 16px;
     width: 100%;
     height: 50%;
+    margin-bottom: 64px;
 
     .middleLeft {
       width: 50%;
